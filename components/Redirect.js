@@ -4,9 +4,9 @@ import { string } from 'prop-types'
 import Head from './Head'
 import { TEXT_COLOR } from './lib/constants'
 
-const Redirect = ({ url }) => (
+const Redirect = ({ title, url }) => (
   <React.Fragment>
-    <Head>
+    <Head title={title}>
       <meta http-equiv="refresh" content={`0;url=${url}`}/>
     </Head>
 
@@ -26,6 +26,7 @@ const Redirect = ({ url }) => (
 )
 
 Redirect.propTypes = {
+  title: string,
   url: string
 }
 
