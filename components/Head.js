@@ -4,9 +4,10 @@ import { string } from 'prop-types'
 
 import { TEXT_SIZE } from './lib/constants'
 
+const defaultOGTitle = 'Colin King'
 const defaultDescription = 'Colin King: Eng @Segment, KP Eng Fellow'
 const defaultOGURL = 'https://colinking.co'
-const defaultOGImage = 'static/google-fast.mp4'
+const defaultOGImage = 'static/profile.png'
 
 const Head = props => (
   <NextHead>
@@ -17,12 +18,14 @@ const Head = props => (
       content={props.description || defaultDescription}
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" sizes="192x192" href="/static/touch-icon.png" />
-    <link rel="apple-touch-icon" href="/static/touch-icon.png" />
-    <link rel="mask-icon" href="/static/favicon-mask.svg" color="#49B882" />
     <link rel="icon" href="/static/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/static/favicon.ico" />
+    <link rel="manifest" href="/static/site.webmanifest" />
     <meta property="og:url" content={props.url || defaultOGURL} />
-    <meta property="og:title" content={props.title || ''} />
+    <meta property="og:title" content={props.title || defaultOGTitle} />
     <meta
       property="og:description"
       content={props.description || defaultDescription}
@@ -33,6 +36,9 @@ const Head = props => (
     <meta property="og:image" content={props.ogImage || defaultOGImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="msapplication-config" content="/static/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700"/>
     <link rel="preload" href="/static/twemoji-awesome.css" as="style" onload="this.rel='stylesheet'" />
