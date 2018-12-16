@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Head from '../components/Head'
 import { Gif, Description, Links } from '../components/Home';
 
-import { TEXT_COLOR, TEXT_SIZE, BP_MEDIUM_TO_LARGE, BP_SMALL_TO_MEDIUM } from '../components/lib/constants'
+import { TEXT_COLOR, TEXT_SIZE } from '../components/lib/constants'
 
 const Home = () => (
   <div>

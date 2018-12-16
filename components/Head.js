@@ -2,9 +2,11 @@ import React from 'react'
 import NextHead from 'next/head'
 import { string } from 'prop-types'
 
+import { TEXT_SIZE } from './lib/constants'
+
 const defaultDescription = 'Colin King: Eng @Segment, KP Eng Fellow'
 const defaultOGURL = 'https://colinking.co'
-const defaultOGImage = ''
+const defaultOGImage = 'static/google.gif'
 
 const Head = props => (
   <NextHead>
@@ -34,6 +36,8 @@ const Head = props => (
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700"/>
     <link rel="stylesheet" href="/static/twemoji-awesome.css"/>
+
+    {props.children}
   </NextHead>
 )
 
