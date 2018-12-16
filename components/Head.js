@@ -2,8 +2,8 @@ import React from 'react'
 import NextHead from 'next/head'
 import { string } from 'prop-types'
 
-const defaultDescription = ''
-const defaultOGURL = ''
+const defaultDescription = 'Colin King: Eng @Segment, KP Eng Fellow'
+const defaultOGURL = 'https://colinking.co'
 const defaultOGImage = ''
 
 const Head = props => (
@@ -31,6 +31,9 @@ const Head = props => (
     <meta property="og:image" content={props.ogImage || defaultOGImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700"/>
+    <link rel="stylesheet" href="/static/twemoji-awesome.css"/>
   </NextHead>
 )
 
