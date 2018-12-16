@@ -6,7 +6,7 @@ import { TEXT_SIZE } from './lib/constants'
 
 const defaultDescription = 'Colin King: Eng @Segment, KP Eng Fellow'
 const defaultOGURL = 'https://colinking.co'
-const defaultOGImage = 'static/google.gif'
+const defaultOGImage = 'static/google-fast.mp4'
 
 const Head = props => (
   <NextHead>
@@ -35,7 +35,7 @@ const Head = props => (
     <meta property="og:image:height" content="630" />
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700"/>
-    <link rel="stylesheet" href="/static/twemoji-awesome.css"/>
+    <link rel="preload" href="/static/twemoji-awesome.css" as="style" onload="this.rel='stylesheet'" />
 
     {props.children}
   </NextHead>
