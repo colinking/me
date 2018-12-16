@@ -3,7 +3,7 @@ import { string } from 'prop-types'
 
 import { SUB_TEXT_SIZE, SECONDARY_ACCENT_COLOR, SECONDARY_ACCENT_COLOR_DARK } from '../../lib/constants'
 
-const Link = ({ emoji, title, link }) => {
+const FooterLink = ({ emoji, title, link }) => {
   const onClick = () => {
     if (window.analytics && window.analytics.track) {
       window.analytics.track("Link Clicked", {
@@ -56,10 +56,10 @@ const Link = ({ emoji, title, link }) => {
   )
 }
 
-Link.propTypes = {
+FooterLink.propTypes = {
   emoji: string,
   title: string,
   link: string
 }
 
-export default Link
+export default FooterLink
