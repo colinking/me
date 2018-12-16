@@ -1,0 +1,55 @@
+==================================================================
+https://keybase.io/colinking
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://colinking.co
+  * I am colinking (https://keybase.io/colinking) on keybase.
+  * I have a public key ASAey_ywFClpQ0ybee2wZP-ddFUK5Q18pVSn0STo-8r9Ago
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01016885bb54450dd6fc6a4cd3bf085cbafbbe86317ae36a5b54a7fe3f1a2dc1c9330a",
+      "host": "keybase.io",
+      "kid": "01201ecbfcb0142969434c9b79edb064ff9d74550ae50d7ca554a7d124e8fbcafd020a",
+      "uid": "49e4672bd3a9fbceb4ec47c452cd3c19",
+      "username": "colinking"
+    },
+    "merkle_root": {
+      "ctime": 1507239556,
+      "hash": "8389d90b1c6c1e1749ec205564a7039bcc79d89cea5e10da62856a3085968236989760c33e43b7ba78be9e38b6e4b8fb386248ba9d8637ec6ac0d615ec501db9",
+      "hash_meta": "baab73cacfaf63b2d68b7df11f10e3a4f1fa4c1aab51e602271ca302626858f4",
+      "seqno": 1519698
+    },
+    "service": {
+      "hostname": "colinking.co",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "1.0.33"
+  },
+  "ctime": 1507239572,
+  "expire_in": 504576000,
+  "prev": "1eb3ea1f0791c85ac6b162a4fabe60046f8993fb8ba0203ccba43d572818f1e5",
+  "seqno": 11,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgHsv8sBQpaUNMm3ntsGT/nXRVCuUNfKVUp9Ek6PvK/QIKp3BheWxvYWTFA0Z7ImJvZHkiOnsia2V5Ijp7ImVsZGVzdF9raWQiOiIwMTAxNjg4NWJiNTQ0NTBkZDZmYzZhNGNkM2JmMDg1Y2JhZmJiZTg2MzE3YWUzNmE1YjU0YTdmZTNmMWEyZGMxYzkzMzBhIiwiaG9zdCI6ImtleWJhc2UuaW8iLCJraWQiOiIwMTIwMWVjYmZjYjAxNDI5Njk0MzRjOWI3OWVkYjA2NGZmOWQ3NDU1MGFlNTBkN2NhNTU0YTdkMTI0ZThmYmNhZmQwMjBhIiwidWlkIjoiNDllNDY3MmJkM2E5ZmJjZWI0ZWM0N2M0NTJjZDNjMTkiLCJ1c2VybmFtZSI6ImNvbGlua2luZyJ9LCJtZXJrbGVfcm9vdCI6eyJjdGltZSI6MTUwNzIzOTU1NiwiaGFzaCI6IjgzODlkOTBiMWM2YzFlMTc0OWVjMjA1NTY0YTcwMzliY2M3OWQ4OWNlYTVlMTBkYTYyODU2YTMwODU5NjgyMzY5ODk3NjBjMzNlNDNiN2JhNzhiZTllMzhiNmU0YjhmYjM4NjI0OGJhOWQ4NjM3ZWM2YWMwZDYxNWVjNTAxZGI5IiwiaGFzaF9tZXRhIjoiYmFhYjczY2FjZmFmNjNiMmQ2OGI3ZGYxMWYxMGUzYTRmMWZhNGMxYWFiNTFlNjAyMjcxY2EzMDI2MjY4NThmNCIsInNlcW5vIjoxNTE5Njk4fSwic2VydmljZSI6eyJob3N0bmFtZSI6ImNvbGlua2luZy5jbyIsInByb3RvY29sIjoiaHR0cHM6In0sInR5cGUiOiJ3ZWJfc2VydmljZV9iaW5kaW5nIiwidmVyc2lvbiI6MX0sImNsaWVudCI6eyJuYW1lIjoia2V5YmFzZS5pbyBnbyBjbGllbnQiLCJ2ZXJzaW9uIjoiMS4wLjMzIn0sImN0aW1lIjoxNTA3MjM5NTcyLCJleHBpcmVfaW4iOjUwNDU3NjAwMCwicHJldiI6IjFlYjNlYTFmMDc5MWM4NWFjNmIxNjJhNGZhYmU2MDA0NmY4OTkzZmI4YmEwMjAzY2NiYTQzZDU3MjgxOGYxZTUiLCJzZXFubyI6MTEsInRhZyI6InNpZ25hdHVyZSJ9o3NpZ8RA/mR6hJtD5b2+QHk2wQvPEG9blp/5PU8dv3wjTTimeKbCdG2svEHMkW4jXxm9V8MboACXJ1IboVdk7RoUCfcFAqhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIOfk3AmqlHcmFCkpYrr14g/79WrhDSSZwlqhyaqriSAno3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/colinking
+
+==================================================================

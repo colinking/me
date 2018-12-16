@@ -1,0 +1,39 @@
+@charset "UTF-8";
+.twa {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 1em 1em;
+}
+
+.twa-books {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/1f4da.svg");
+}
+.twa-briefcase {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/1f4bc.svg");
+}
+.twa-computer {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/1f4bb.svg");
+}
+.twa-bicyclist {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/1f6b4.svg");
+}
+.twa-page-facing-up {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/1f4c4.svg");
+}
+.twa-writing-hand {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/270d.svg");
+}
+.twa-email {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/2709.svg");
+}
+.twa-bird {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/1f426.svg");
+}
+.twa-key {
+  background-image: url("https://twemoji.maxcdn.com/2/svg/1f511.svg");
+}
