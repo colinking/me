@@ -7,5 +7,5 @@
       "use": "@now/static-build"
     }
   ],
-  "aliases": ["colinking.co", "www.colinking.co"]
+  "alias": ["colinking.co", "www.colinking.co"]
 }
