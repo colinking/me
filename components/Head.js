@@ -1,6 +1,11 @@
 import React from 'react'
 import NextHead from 'next/head'
 import { string } from 'prop-types'
+import snippet from '@segment/snippet'
+
+const segment = snippet.min({
+  apiKey: 'KdZKMvdBedsuBs0X6ZfJ5fjxbqcm2SlC'
+});
 
 import { TEXT_SIZE } from './lib/constants'
 
@@ -41,7 +46,9 @@ const Head = props => (
     <meta name="theme-color" content="#ffffff" />
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700"/>
-    <link rel="preload" href="/static/twemoji-awesome.css" as="style" onload="this.rel='stylesheet'" />
+    <link rel="preload" href="/static/twemoji-awesome.css" as="style" onLoad="this.rel='stylesheet'" />
+
+    <script>{segment}</script>
 
     {props.children}
   </NextHead>

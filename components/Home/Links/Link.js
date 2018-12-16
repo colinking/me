@@ -3,48 +3,58 @@ import { string } from 'prop-types'
 
 import { SUB_TEXT_SIZE, SECONDARY_ACCENT_COLOR, SECONDARY_ACCENT_COLOR_DARK } from '../../lib/constants'
 
-const Link = ({ emoji, title, link }) => (
-  <React.Fragment>
-    <div className="link">
-      <a href={link}>
-        {title}
-      </a>
-      <a href={link}>
-        <i className={`twa twa-${emoji}`} />
-      </a>
-    </div>
+const Link = ({ emoji, title, link }) => {
+  const onClick = () => {
+    if (window.analytics && window.analytics.track) {
+      window.analytics.track("Link Clicked", {
+        link,
+        text: title,
+        type: "Footer"
+      })
+    }
+  }
 
-    <style jsx>{`
-      .link {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: flex-end;
+  return (
+    <React.Fragment>
+      <div className="link">
+        <a href={link} onClick={onClick}>
+          {title}
+          <i className={`twa twa-${emoji}`} />
+        </a>
+      </div>
 
-        font-size: ${SUB_TEXT_SIZE};
-        margin: auto;
-        line-height: 2;
-        width: 160px;
-      }
-      a {
-        text-decoration: none;
-        color: ${SECONDARY_ACCENT_COLOR};
-      }
-      i {
-        opacity: 0.8;
-        margin-left: 15px;
-      }
-      p {
-        color: ${SECONDARY_ACCENT_COLOR};
-        opacity: 0.8;
-      }
-      a:hover {
-        color: ${SECONDARY_ACCENT_COLOR_DARK};
-        text-decoration: underline;
-      }
-    `}</style>
-  </React.Fragment>
-)
+      <style jsx>{`
+        .link {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: flex-end;
+
+          font-size: ${SUB_TEXT_SIZE};
+          margin: auto;
+          line-height: 2;
+          width: 160px;
+        }
+        a {
+          text-decoration: none;
+          color: ${SECONDARY_ACCENT_COLOR};
+        }
+        i {
+          opacity: 0.8;
+          margin-left: 15px;
+        }
+        p {
+          color: ${SECONDARY_ACCENT_COLOR};
+          opacity: 0.8;
+        }
+        a:hover {
+          color: ${SECONDARY_ACCENT_COLOR_DARK};
+          text-decoration: underline;
+        }
+      `}</style>
+    </React.Fragment>
+  )
+}
 
 Link.propTypes = {
   emoji: string,
