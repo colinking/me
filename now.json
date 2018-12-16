@@ -6,5 +6,6 @@
       "src": "package.json",
       "use": "@now/static-build"
     }
-  ]
+  ],
+  "aliases": ["colinking.co", "www.colinking.co"]
 }
