@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Head from '../components/Head'
-import { Video, Description, FooterLinks } from '../components/Home';
+import { Video, Description, FooterLinks } from '../components/Home'
 
 import { TEXT_COLOR, TEXT_SIZE } from '../components/lib/constants'
 
@@ -10,7 +10,7 @@ const Home = () => (
     <Head title="Colin King" />
 
     <div id="content">
-      <Video src="static/google-fast.mp4"/>
+      <Video src="google-fast.mp4"/>
       <h1 id="name">Colin King</h1>
       <div id="description">
         <Description/>
