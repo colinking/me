@@ -48,7 +48,7 @@ const Head = props => (
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700"/>
     <link rel="preload" href="/twemoji-awesome.css" as="style" onLoad="this.rel='stylesheet'" />
 
-    <script>{segment}</script>
+    <script dangerouslySetInnerHTML={{ __html: segment }} />
 
     {props.children}
   </NextHead>
