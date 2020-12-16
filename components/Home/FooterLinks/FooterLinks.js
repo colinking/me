@@ -5,7 +5,7 @@ import FooterLink from './FooterLink';
 const FooterLinks = () => (
   <React.Fragment>
     <div id="link-container">
-      <FooterLink emoji="books" title="Goodreads" link="https://www.goodreads.com/user/show/40155956-colin-king" />
+      <FooterLink emoji="books" title="Goodreads" link="https://www.goodreads.com/colinking" />
       <FooterLink emoji="briefcase" title="LinkedIn" link="https://www.linkedin.com/in/colinking1/" />
       <FooterLink emoji="computer" title="GitHub" link="https://github.com/colinking" />
       <FooterLink emoji="bicyclist" title="Strava" link="https://www.strava.com/athletes/9159854" />

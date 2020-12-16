@@ -1,8 +1,7 @@
 {
   "name": "me",
   "scripts": {
-    "now-build": "next build && next export -o dist",
-    "dev": "next",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start"
   },
