@@ -8,18 +8,18 @@ const Description = ({ src }) => (
     <p>
       I'm a Software Engineer at{' '}
       <TextLink href="https://segment.com">Segment</TextLink>
-      {' '}on the{' '}
+      {' '}working on infrastructure services. Before that, I worked on{' '}
       <TextLink href="https://segment.com/product/protocols">Protocols</TextLink>
-      {' '}team where I also maintain{' '}
+      {' '}and{' '}
       <TextLink href="https://github.com/segmentio/typewriter">Typewriter</TextLink>
       .
     </p>
     <p>
-      Before that, I was a Venture Partner at{' '}
+      Before Segment, I was a Venture Partner at{' '}
       <TextLink href="http://contrarycap.com/">Contrary Capital</TextLink>
       , where I ran the{' '}
       <TextLink href="https://www.umd.edu/">University of Maryland</TextLink>
-      {' '}community. I also founded and run their branding and engineering teams.
+      {' '}community. I also bootstrapped the branding and engineering teams at Contrary.
     </p>
     <p>
       I was also a{' '}
