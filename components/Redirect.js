@@ -1,33 +1,34 @@
-import React from 'react'
-import { string } from 'prop-types'
+import React from "react";
+import { string } from "prop-types";
 
-import Head from './Head'
-import { TEXT_COLOR } from './lib/constants'
+import Head from "./Head";
+import { TEXT_COLOR } from "./lib/constants";
 
 const Redirect = ({ title, url }) => (
   <React.Fragment>
     <Head title={title}>
-      <meta http-equiv="refresh" content={`0;url=${url}`}/>
+      <meta httpEquiv="refresh" content={`0;url=${url}`} />
     </Head>
 
     <p>
-      If you are not redirected automatically, click:{' '}
-      <a href={url}>here</a>
+      If you are not redirected automatically, click: <a href={url}>here</a>
       .
     </p>
 
-    <style jsx>{`
+    <style jsx>
+      {`
       p {
         font-family: 'Inconsolata', sans-serif;
         color: ${TEXT_COLOR};
       }  
-    `}</style>
+    `}
+    </style>
   </React.Fragment>
-)
+);
 
 Redirect.propTypes = {
   title: string,
-  url: string
-}
+  url: string,
+};
 
-export default Redirect
+export default Redirect;

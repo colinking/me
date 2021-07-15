@@ -1,23 +1,23 @@
-import React from 'react'
-import NextHead from 'next/head'
-import { string } from 'prop-types'
-import snippet from '@segment/snippet'
+import React from "react";
+import NextHead from "next/head";
+import { string } from "prop-types";
+import snippet from "@segment/snippet";
 
 const segment = snippet.min({
-  apiKey: 'KdZKMvdBedsuBs0X6ZfJ5fjxbqcm2SlC'
+  apiKey: "KdZKMvdBedsuBs0X6ZfJ5fjxbqcm2SlC",
 });
 
-import { TEXT_SIZE } from './lib/constants'
+import { TEXT_SIZE } from "./lib/constants";
 
-const defaultOGTitle = 'Colin King'
-const defaultDescription = 'Colin King: Eng @Segment, KP Eng Fellow'
-const defaultOGURL = 'https://colinking.co'
-const defaultOGImage = 'profile.png'
+const defaultOGTitle = "Colin King";
+const defaultDescription = "Colin King: Eng @Segment, KP Eng Fellow";
+const defaultOGURL = "https://colinking.co";
+const defaultOGImage = "profile.png";
 
-const Head = props => (
+const Head = (props) => (
   <NextHead>
     <meta charSet="UTF-8" />
-    <title>{props.title || ''}</title>
+    <title>{props.title || ""}</title>
     <meta
       name="description"
       content={props.description || defaultDescription}
@@ -44,21 +44,29 @@ const Head = props => (
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="theme-color" content="#ffffff" />
-    
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700"/>
-    <link rel="preload" href="/twemoji-awesome.css" as="style" onLoad="this.rel='stylesheet'" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=block"
+    />
+    <link
+      rel="preload"
+      href="/twemoji-awesome.css"
+      as="style"
+      onLoad="this.rel='stylesheet'"
+    />
 
     <script dangerouslySetInnerHTML={{ __html: segment }} />
 
     {props.children}
   </NextHead>
-)
+);
 
 Head.propTypes = {
   title: string,
   description: string,
   url: string,
-  ogImage: string
-}
+  ogImage: string,
+};
 
-export default Head
+export default Head;
