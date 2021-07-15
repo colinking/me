@@ -1,7 +1,12 @@
-import React from 'react'
-import { string } from 'prop-types'
+import React from "react";
+import { string } from "prop-types";
 
-import { SUB_TEXT_SIZE, SECONDARY_ACCENT_COLOR, SECONDARY_ACCENT_COLOR_DARK } from '../../lib/constants'
+import {
+  SECONDARY_ACCENT_COLOR,
+  SECONDARY_ACCENT_COLOR_DARK,
+  SUB_TEXT_SIZE,
+  TEXT_SIZE,
+} from "../../lib/constants";
 
 const FooterLink = ({ emoji, title, link }) => {
   const onClick = () => {
@@ -9,10 +14,10 @@ const FooterLink = ({ emoji, title, link }) => {
       window.analytics.track("Link Clicked", {
         link,
         text: title,
-        type: "Footer"
-      })
+        type: "Footer",
+      });
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -23,17 +28,18 @@ const FooterLink = ({ emoji, title, link }) => {
         </a>
       </div>
 
-      <style jsx>{`
+      <style jsx>
+        {`
         .link {
           display: flex;
           flex-direction: row;
           flex-wrap: nowrap;
           justify-content: flex-end;
 
-          font-size: ${SUB_TEXT_SIZE};
+          font-size: ${TEXT_SIZE};
           margin: auto;
           line-height: 2;
-          width: 160px;
+          width: 185px;
         }
         a {
           text-decoration: none;
@@ -51,15 +57,16 @@ const FooterLink = ({ emoji, title, link }) => {
           color: ${SECONDARY_ACCENT_COLOR_DARK};
           text-decoration: underline;
         }
-      `}</style>
+      `}
+      </style>
     </React.Fragment>
-  )
-}
+  );
+};
 
 FooterLink.propTypes = {
   emoji: string,
   title: string,
-  link: string
-}
+  link: string,
+};
 
-export default FooterLink
+export default FooterLink;

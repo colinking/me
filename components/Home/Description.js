@@ -5,6 +5,7 @@ import {
   ACCENT_COLOR,
   ACCENT_COLOR_DARK,
   BP_MEDIUM_TO_LARGE,
+  SUB_TEXT_SIZE,
   TEXT_SIZE,
 } from "../lib/constants";
 
@@ -13,7 +14,13 @@ const Description = ({ src }) => (
     <p>
       I{"'"}m a Software Engineer at{" "}
       <TextLink href="https://airplane.dev">Airplane</TextLink>.{" "}
-      <span>(Come work with us!)</span>
+      <span className="small">
+        (<TextLink
+          href="https://careers.airplane.dev/9b0a462e4ccf4c41bf19a5b04ed6e45f"
+        >
+          Come work with us!
+        </TextLink>)
+      </span>
     </p>
     <p>
       Before Airplane, I worked at{" "}
@@ -48,6 +55,9 @@ const Description = ({ src }) => (
         font-size: ${TEXT_SIZE};
         font-weight: 400;
         line-height: 1.42;
+      }
+      .small {
+        font-size: ${SUB_TEXT_SIZE}
       }
     `}
     </style>
