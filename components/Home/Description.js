@@ -12,18 +12,16 @@ import {
 const Description = ({ src }) => (
   <React.Fragment>
     <p>
-      I{"'"}m a Software Engineer at{" "}
-      <TextLink href="https://airplane.dev">Airplane</TextLink>.{" "}
-      <span className="small">
-        (<TextLink
-          href="https://careers.airplane.dev/9b0a462e4ccf4c41bf19a5b04ed6e45f"
+      I{"'"}m a software engineer interested in new tech primitives.
+      I'm working on better scripting infrastructure with the{" "}<TextLink
+          href="https://www.airplane.dev/careers"
         >
-          Come work with us!
-        </TextLink>)
-      </span>
+          amazing folks
+        </TextLink> at{" "}
+      <TextLink href="https://airplane.dev">Airplane</TextLink>.{" "}
     </p>
     <p>
-      Before Airplane, I worked at{" "}
+      Previously, I worked at{" "}
       <TextLink href="https://segment.com">Segment</TextLink>{" "}
       on infrastructure services. I also worked on{"   "}
       <TextLink href="https://segment.com/product/protocols">
@@ -36,8 +34,8 @@ const Description = ({ src }) => (
       .
     </p>
     <p>
-      Back that, I was at <TextLink href="https://umd.edu/">UMD</TextLink>{" "}
-      where I pursued a Master{"'"}s degree in Computer Science focused on
+      Before that, I was at <TextLink href="https://umd.edu/">UMD</TextLink>{" "}
+      where I pursued a Master{"'"}s in Computer Science with a focus on
       distributed systems. I also created the course{" "}
       <TextLink href="http://ter.ps/pccS18">
         Practical Cloud Computing with AWS
