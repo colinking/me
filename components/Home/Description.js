@@ -13,7 +13,7 @@ const Description = ({ src }) => (
   <React.Fragment>
     <p>
       I{"'"}m a software engineer interested in new tech primitives.
-      I'm working on better scripting infrastructure with the{" "}<TextLink
+      I{"'"}m working on better scripting infrastructure with the{" "}<TextLink
           href="https://www.airplane.dev/careers"
         >
           amazing folks
