@@ -10,7 +10,7 @@ const segment = snippet.min({
 const defaultOGTitle = "Colin King";
 const defaultDescription = "eng @ airplane.dev";
 const defaultOGURL = "https://colinking.co";
-const defaultOGImage = "profile.png";
+const defaultOGImage = "/profile.png";
 
 const Head = (props) => (
   <NextHead>
