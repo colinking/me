@@ -15,6 +15,10 @@
 .DS_Store
 .env
 npm-debug.log*
+next-env.d.ts
 
 # Plans
 plans/**
+
+# TypeScript
+*.tsbuildinfo

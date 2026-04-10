@@ -1,9 +1,11 @@
-import React from 'react'
+import { TEXT_COLOR } from "../lib/constants";
 
-import { TEXT_COLOR } from '../lib/constants'
+type VideoProps = {
+  src: string;
+};
 
-const Gif = ({ src }) => (
-  <React.Fragment>
+const Video = ({ src }: VideoProps) => (
+  <>
     <video autoPlay loop muted playsInline>
       <source src={src} type="video/mp4" />
     </video>
@@ -20,7 +22,7 @@ const Gif = ({ src }) => (
         margin: auto;
       }
     `}</style>
-  </React.Fragment>
-)
+  </>
+);
 
-export default Gif
+export default Video;

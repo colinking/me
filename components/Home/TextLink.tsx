@@ -1,22 +1,27 @@
-import React from 'react'
+import { ACCENT_COLOR, ACCENT_COLOR_DARK } from "../lib/constants";
 
-import { ACCENT_COLOR, ACCENT_COLOR_DARK } from '../lib/constants'
+type TextLinkProps = {
+  children: string;
+  href: string;
+};
 
-const TextLink = ({ href, children }) => {
+const TextLink = ({ href, children }: TextLinkProps) => {
   const onClick = () => {
     if (window.analytics?.track) {
       window.analytics.track("Link Clicked", {
         link: href,
         text: children,
-        type: "Description"
-      })
+        type: "Description",
+      });
     }
-  }
+  };
 
   return (
-    <React.Fragment>
-      <a href={href} onClick={onClick}>{children}</a>
-  
+    <>
+      <a href={href} onClick={onClick}>
+        {children}
+      </a>
+
       <style jsx>{`
         a {
           color: ${ACCENT_COLOR};
@@ -27,8 +32,8 @@ const TextLink = ({ href, children }) => {
           text-decoration: underline;
         }
       `}</style>
-    </React.Fragment>
-  )
-}
+    </>
+  );
+};
 
-export default TextLink
+export default TextLink;

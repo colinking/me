@@ -16,6 +16,6 @@ const Resume = () => (
       }
     `}</style>
   </div>
-)
+);
 
-export default Resume
+export default Resume;
