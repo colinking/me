@@ -19,3 +19,6 @@ next-env.d.ts
 
 # Plans
 plans/**
+
+# TypeScript
+*.tsbuildinfo
