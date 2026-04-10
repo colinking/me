@@ -1,5 +1,5 @@
-import TextLink from "./TextLink";
 import { SUB_TEXT_SIZE, TEXT_SIZE } from "../lib/constants";
+import TextLink from "./TextLink";
 
 const Description = () => (
   <>
