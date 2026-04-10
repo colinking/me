@@ -14,6 +14,6 @@ Font ([Inconsolata](https://fonts.google.com/specimen/Inconsolata)) inspired by 
 
 ### Contributing
 
-`yarn dev`: Run locally
+`npm run dev`: Run locally
 
 `now`: Deploy
