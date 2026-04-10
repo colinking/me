@@ -1,4 +1,3 @@
-import React from "react";
 import NextHead from "next/head";
 import { string } from "prop-types";
 import snippet from "@segment/snippet";
@@ -45,9 +44,10 @@ const Head = (props) => (
 
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=block"
+      href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap"
     />
 
+    {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Segment's snippet package generates the script we intentionally embed here. */}
     <script dangerouslySetInnerHTML={{ __html: segment }} />
 
     {props.children}

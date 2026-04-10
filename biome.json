@@ -1,0 +1,9 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.11/schema.json",
+  "files": {
+    "includes": ["pages/**/*.js", "components/**/*.js", "styles/**/*.css"]
+  },
+  "formatter": {
+    "enabled": false
+  }
+}
