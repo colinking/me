@@ -4,7 +4,7 @@ import { ACCENT_COLOR, ACCENT_COLOR_DARK } from '../lib/constants'
 
 const TextLink = ({ href, children }) => {
   const onClick = () => {
-    if (window.analytics && window.analytics.track) {
+    if (window.analytics?.track) {
       window.analytics.track("Link Clicked", {
         link: href,
         text: children,

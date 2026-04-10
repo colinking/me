@@ -1,15 +1,9 @@
 import React from "react";
 
 import TextLink from "./TextLink";
-import {
-  ACCENT_COLOR,
-  ACCENT_COLOR_DARK,
-  BP_MEDIUM_TO_LARGE,
-  SUB_TEXT_SIZE,
-  TEXT_SIZE,
-} from "../lib/constants";
+import { SUB_TEXT_SIZE, TEXT_SIZE } from "../lib/constants";
 
-const Description = ({ src }) => (
+const Description = () => (
   <React.Fragment>
     <p>
       I{"'"}m a software engineer interested in new tech primitives.

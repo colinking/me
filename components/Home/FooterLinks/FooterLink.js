@@ -4,13 +4,12 @@ import { string } from "prop-types";
 import {
   SECONDARY_ACCENT_COLOR,
   SECONDARY_ACCENT_COLOR_DARK,
-  SUB_TEXT_SIZE,
   TEXT_SIZE,
 } from "../../lib/constants";
 
 const FooterLink = ({ emoji, title, link }) => {
   const onClick = () => {
-    if (window.analytics && window.analytics.track) {
+    if (window.analytics?.track) {
       window.analytics.track("Link Clicked", {
         link,
         text: title,
