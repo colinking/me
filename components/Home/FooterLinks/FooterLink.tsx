@@ -1,13 +1,16 @@
-import React from "react";
-import { string } from "prop-types";
-
 import {
   SECONDARY_ACCENT_COLOR,
   SECONDARY_ACCENT_COLOR_DARK,
   TEXT_SIZE,
 } from "../../lib/constants";
 
-const FooterLink = ({ emoji, title, link }) => {
+type FooterLinkProps = {
+  emoji: string;
+  link: string;
+  title: string;
+};
+
+const FooterLink = ({ emoji, title, link }: FooterLinkProps) => {
   const onClick = () => {
     if (window.analytics?.track) {
       window.analytics.track("Link Clicked", {
@@ -19,7 +22,7 @@ const FooterLink = ({ emoji, title, link }) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <div className="link">
         <a href={link} onClick={onClick}>
           {title}
@@ -27,8 +30,7 @@ const FooterLink = ({ emoji, title, link }) => {
         </a>
       </div>
 
-      <style jsx>
-        {`
+      <style jsx>{`
         .link {
           display: flex;
           flex-direction: row;
@@ -56,16 +58,9 @@ const FooterLink = ({ emoji, title, link }) => {
           color: ${SECONDARY_ACCENT_COLOR_DARK};
           text-decoration: underline;
         }
-      `}
-      </style>
-    </React.Fragment>
+      `}</style>
+    </>
   );
-};
-
-FooterLink.propTypes = {
-  emoji: string,
-  title: string,
-  link: string,
 };
 
 export default FooterLink;

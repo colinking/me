@@ -1,6 +1,7 @@
-import NextHead from "next/head";
-import { string } from "prop-types";
+import type { ReactNode } from "react";
+
 import snippet from "@segment/snippet";
+import NextHead from "next/head";
 
 const segment = snippet.min({
   apiKey: "KdZKMvdBedsuBs0X6ZfJ5fjxbqcm2SlC",
@@ -11,14 +12,25 @@ const defaultDescription = "eng @ airplane.dev";
 const defaultOGURL = "https://colinking.co";
 const defaultOGImage = "/profile.png#1";
 
-const Head = (props) => (
+type HeadProps = {
+  children?: ReactNode;
+  description?: string;
+  ogImage?: string;
+  title?: string;
+  url?: string;
+};
+
+const Head = ({
+  children,
+  description,
+  ogImage,
+  title,
+  url,
+}: HeadProps) => (
   <NextHead>
     <meta charSet="UTF-8" />
-    <title>{props.title || ""}</title>
-    <meta
-      name="description"
-      content={props.description || defaultDescription}
-    />
+    <title>{title || ""}</title>
+    <meta name="description" content={description || defaultDescription} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -26,16 +38,13 @@ const Head = (props) => (
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta property="og:url" content={props.url || defaultOGURL} />
-    <meta property="og:title" content={props.title || defaultOGTitle} />
-    <meta
-      property="og:description"
-      content={props.description || defaultDescription}
-    />
-    <meta name="twitter:site" content={props.url || defaultOGURL} />
+    <meta property="og:url" content={url || defaultOGURL} />
+    <meta property="og:title" content={title || defaultOGTitle} />
+    <meta property="og:description" content={description || defaultDescription} />
+    <meta name="twitter:site" content={url || defaultOGURL} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content={props.ogImage || defaultOGImage} />
-    <meta property="og:image" content={props.ogImage || defaultOGImage} />
+    <meta name="twitter:image" content={ogImage || defaultOGImage} />
+    <meta property="og:image" content={ogImage || defaultOGImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="msapplication-TileColor" content="#da532c" />
@@ -50,15 +59,8 @@ const Head = (props) => (
     {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Segment's snippet package generates the script we intentionally embed here. */}
     <script dangerouslySetInnerHTML={{ __html: segment }} />
 
-    {props.children}
+    {children}
   </NextHead>
 );
-
-Head.propTypes = {
-  title: string,
-  description: string,
-  url: string,
-  ogImage: string,
-};
 
 export default Head;
