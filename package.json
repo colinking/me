@@ -7,16 +7,16 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@segment/snippet": "4.15.3",
-    "next": "12.0.8",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "next": "^16.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
-    "eslint": "8.7.0",
-    "eslint-config-next": "12.0.8"
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.3"
   }
 }
