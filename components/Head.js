@@ -47,12 +47,6 @@ const Head = (props) => (
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=block"
     />
-    <link
-      rel="preload"
-      href="/twemoji-awesome.css"
-      as="style"
-      onLoad="this.rel='stylesheet'"
-    />
 
     <script dangerouslySetInnerHTML={{ __html: segment }} />
 
