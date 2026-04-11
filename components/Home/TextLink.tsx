@@ -1,11 +1,9 @@
-import { ACCENT_COLOR, ACCENT_COLOR_DARK } from "../lib/constants";
-
 type TextLinkProps = {
   children: string;
   href: string;
 };
 
-const TextLink = ({ href, children }: TextLinkProps) => {
+export const TextLink = ({ href, children }: TextLinkProps) => {
   const onClick = () => {
     if (window.analytics?.track) {
       window.analytics.track("Link Clicked", {
@@ -17,23 +15,12 @@ const TextLink = ({ href, children }: TextLinkProps) => {
   };
 
   return (
-    <>
-      <a href={href} onClick={onClick}>
+      <a
+        href={href}
+        onClick={onClick}
+        className="text-[#65d091] no-underline hover:text-[#51a774] hover:underline"
+      >
         {children}
       </a>
-
-      <style jsx>{`
-        a {
-          color: ${ACCENT_COLOR};
-          text-decoration: none;
-        }
-        a:hover {
-          color: ${ACCENT_COLOR_DARK};
-          text-decoration: underline;
-        }
-      `}</style>
-    </>
   );
 };
-
-export default TextLink;

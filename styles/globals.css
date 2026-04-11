@@ -1,0 +1,12 @@
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+
+@layer theme {
+  :root {
+    --font-inconsolata: "Inconsolata", sans-serif;
+  }
+}
+
+body {
+  margin: 0;
+}

@@ -1,28 +1,15 @@
-import { TEXT_COLOR } from "../lib/constants";
-
 type VideoProps = {
   src: string;
 };
 
-const Video = ({ src }: VideoProps) => (
-  <>
-    <video autoPlay loop muted playsInline>
+export const Video = ({ src }: VideoProps) => (
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="mx-auto block h-72.5 w-54.5 rounded-[20px] border-2 border-[#333] p-0"
+  >
       <source src={src} type="video/mp4" />
-    </video>
-
-    <style jsx>{`
-      video {
-        border: 2px solid ${TEXT_COLOR};
-        height: 290px;
-        border-radius: 20px;
-        width: 218px;
-        margin: 0;
-        padding: 0;
-        display: block;
-        margin: auto;
-      }
-    `}</style>
-  </>
+  </video>
 );
-
-export default Video;

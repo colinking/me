@@ -1,45 +1,20 @@
-import Head from "../components/Head";
-import { Description, FooterLinks, Video } from "../components/Home";
-import { TEXT_COLOR, TEXT_SIZE } from "../components/lib/constants";
+import { Head } from "../components/Head";
+import { Description } from "../components/Home/Description";
+import { FooterLinks } from "../components/Home/FooterLinks/FooterLinks";
+import { Video } from "../components/Home/Video";
 
 const Home = () => (
-  <div>
+  <div className="border-t-[5px] border-t-[#65d091]">
     <Head title="Colin King" />
 
-    <div id="content">
+    <div className="mx-auto my-25 max-w-230 px-10 text-center text-[#333] [font-family:var(--font-inconsolata)]">
       <Video src="google-fast.mp4" />
-      <h1 id="name">Colin King</h1>
-      <div id="description">
+      <h1 className="mt-7.5 text-[30px] font-black">Colin King</h1>
+      <div className="mb-12.5">
         <Description />
       </div>
       <FooterLinks />
     </div>
-
-    <style jsx>{`
-      :global(body) {
-        border-top: 5px solid #65d091;
-        margin: 0;
-      }
-      * {
-        font-family: "Inconsolata", sans-serif;
-        color: ${TEXT_COLOR};
-      }
-      #content {
-        max-width: 920px;
-        margin: 100px auto;
-        text-align: center;
-        padding-left: 40px;
-        padding-right: 40px;
-      }
-      #name {
-        font-weight: 900;
-        margin-top: 30px;
-        font-size: ${TEXT_SIZE};
-      }
-      #description {
-        margin-bottom: 50px;
-      }
-    `}</style>
   </div>
 );
 

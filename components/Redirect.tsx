@@ -1,5 +1,4 @@
-import Head from "./Head";
-import { TEXT_COLOR } from "./lib/constants";
+import { Head } from "./Head";
 
 type RedirectProps = {
   description?: string;
@@ -8,23 +7,14 @@ type RedirectProps = {
   url: string;
 };
 
-const Redirect = ({ title, description, url, image }: RedirectProps) => (
+export const Redirect = ({ title, description, url, image }: RedirectProps) => (
   <>
     <Head title={title} description={description} ogImage={image}>
       <meta httpEquiv="refresh" content={`0;url=${url}`} />
     </Head>
 
-    <p>
+    <p className="p-2 text-[#333] [font-family:var(--font-inconsolata)]">
       If you are not redirected automatically, click: <a href={url}>here</a>.
     </p>
-
-    <style jsx>{`
-      p {
-        font-family: "Inconsolata", sans-serif;
-        color: ${TEXT_COLOR};
-      }
-    `}</style>
   </>
 );
-
-export default Redirect;

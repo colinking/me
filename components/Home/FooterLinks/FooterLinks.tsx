@@ -1,8 +1,7 @@
-import FooterLink from "./FooterLink";
+import { FooterLink } from "./FooterLink";
 
-const FooterLinks = () => (
-  <>
-    <div id="link-container">
+export const FooterLinks = () => (
+    <div>
       <FooterLink
         emoji="writing-hand"
         title="Blog (1)"
@@ -41,15 +40,4 @@ const FooterLinks = () => (
         link="https://keybase.io/colinking"
       />
     </div>
-
-    <style jsx>{`
-      #link-container {
-        flex: row;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    `}</style>
-  </>
 );
-
-export default FooterLinks;
