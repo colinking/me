@@ -1,10 +1,5 @@
-import snippet from "@segment/snippet";
 import NextHead from "next/head";
 import type { ReactNode } from "react";
-
-const segment = snippet.min({
-  apiKey: "KdZKMvdBedsuBs0X6ZfJ5fjxbqcm2SlC",
-});
 
 const defaultOGTitle = "Colin King";
 const defaultDescription = "eng @ airplane.dev";
@@ -49,14 +44,6 @@ export const Head = ({
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="theme-color" content="#ffffff" />
-
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap"
-    />
-
-    {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Segment's snippet package generates the script we intentionally embed here. */}
-    <script dangerouslySetInnerHTML={{ __html: segment }} />
 
     {children}
   </NextHead>

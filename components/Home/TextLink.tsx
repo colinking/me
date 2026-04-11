@@ -1,3 +1,5 @@
+import { analytics } from "@/lib/analytics";
+
 type TextLinkProps = {
   children: string;
   href: string;
@@ -5,13 +7,11 @@ type TextLinkProps = {
 
 export const TextLink = ({ href, children }: TextLinkProps) => {
   const onClick = () => {
-    if (window.analytics?.track) {
-      window.analytics.track("Link Clicked", {
-        link: href,
-        text: children,
-        type: "Description",
-      });
-    }
+    analytics.track("Link Clicked", {
+      link: href,
+      text: children,
+      type: "Description",
+    });
   };
 
   return (

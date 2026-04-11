@@ -1,4 +1,4 @@
-import { Head } from "./Head";
+import { Head } from "@/components/Head";
 
 type RedirectProps = {
   description?: string;

@@ -1,3 +1,5 @@
+import { analytics } from "@/lib/analytics";
+
 type FooterLinkProps = {
   emoji: string;
   link: string;
@@ -6,13 +8,11 @@ type FooterLinkProps = {
 
 export const FooterLink = ({ emoji, title, link }: FooterLinkProps) => {
   const onClick = () => {
-    if (window.analytics?.track) {
-      window.analytics.track("Link Clicked", {
-        link,
-        text: title,
-        type: "Footer",
-      });
-    }
+    analytics.track("Link Clicked", {
+      link,
+      text: title,
+      type: "Footer",
+    });
   };
 
   return (

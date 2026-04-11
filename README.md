@@ -16,6 +16,8 @@ Run the development server:
 npm run dev
 ```
 
+If you want Segment enabled locally, run `npx vercel env pull .env.local`.
+
 Create a production build:
 
 ```bash
