@@ -12,7 +12,7 @@
     "lint": "biome lint ."
   },
   "dependencies": {
-    "@segment/snippet": "4.15.3",
+    "@segment/analytics-next": "^1.81.1",
     "@vercel/speed-insights": "^2.0.0",
     "next": "^16.2.3",
     "react": "^19.2.5",

@@ -1,4 +1,4 @@
-import { TextLink } from "./TextLink";
+import { TextLink } from "@/components/Home/TextLink";
 
 export const Description = () => (
   <div className="text-left text-[30px] font-normal leading-[1.42]">

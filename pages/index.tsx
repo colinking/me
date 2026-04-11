@@ -1,7 +1,7 @@
-import { Head } from "../components/Head";
-import { Description } from "../components/Home/Description";
-import { FooterLinks } from "../components/Home/FooterLinks/FooterLinks";
-import { Video } from "../components/Home/Video";
+import { Head } from "@/components/Head";
+import { Description } from "@/components/Home/Description";
+import { FooterLinks } from "@/components/Home/FooterLinks/FooterLinks";
+import { Video } from "@/components/Home/Video";
 
 const Home = () => (
   <div className="border-t-[5px] border-t-[#65d091]">

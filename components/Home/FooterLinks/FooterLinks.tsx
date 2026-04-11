@@ -1,4 +1,4 @@
-import { FooterLink } from "./FooterLink";
+import { FooterLink } from "@/components/Home/FooterLinks/FooterLink";
 
 export const FooterLinks = () => (
     <div>
