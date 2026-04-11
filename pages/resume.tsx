@@ -1,8 +1,9 @@
 const Resume = () => (
-  <iframe
-    src="https://drive.google.com/file/d/0BwpZPtPt9scANW1iYWFKSlRMT0k/preview"
+  <embed
+    src="/resume.pdf"
+    type="application/pdf"
     title="Colin King's resume"
-    className="h-screen w-screen border-0"
+    className="h-screen w-screen"
   />
 );
 

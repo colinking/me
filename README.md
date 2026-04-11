@@ -30,6 +30,18 @@ Run the production server locally after building:
 npm run start
 ```
 
+## Resume
+
+This website serves my resume. This repo contains the the LaTeX code to generate it.
+
+
+```bash
+brew install tectonic
+tectonic resume/resume.tex --outdir ./public
+```
+
+This writes the output PDF to `resume/resume.pdf`.
+
 ## Deployment
 
 This website is automatically deployed via Vercel.
