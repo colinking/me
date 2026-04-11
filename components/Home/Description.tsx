@@ -1,8 +1,7 @@
-import { SUB_TEXT_SIZE, TEXT_SIZE } from "../lib/constants";
-import TextLink from "./TextLink";
+import { TextLink } from "./TextLink";
 
-const Description = () => (
-  <>
+export const Description = () => (
+  <div className="text-left text-[30px] font-normal leading-[1.42]">
     <p>
       I{"'"}m a software engineer interested in new tech primitives. I{"'"}m
       working on better scripting infrastructure with the{" "}
@@ -30,20 +29,5 @@ const Description = () => (
       and taught it twice (<TextLink href="https://ter.ps/cmsc389l">Fall</TextLink>{" "}
       and <TextLink href="https://ter.ps/pccS18">Spring</TextLink>).
     </p>
-
-    <style jsx>{`
-      p {
-        text-align: left;
-        margin-bottom: 25px;
-        font-size: ${TEXT_SIZE};
-        font-weight: 400;
-        line-height: 1.42;
-      }
-      .small {
-        font-size: ${SUB_TEXT_SIZE};
-      }
-    `}</style>
-  </>
+  </div>
 );
-
-export default Description;

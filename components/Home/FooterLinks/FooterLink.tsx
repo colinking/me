@@ -1,16 +1,10 @@
-import {
-  SECONDARY_ACCENT_COLOR,
-  SECONDARY_ACCENT_COLOR_DARK,
-  TEXT_SIZE,
-} from "../../lib/constants";
-
 type FooterLinkProps = {
   emoji: string;
   link: string;
   title: string;
 };
 
-const FooterLink = ({ emoji, title, link }: FooterLinkProps) => {
+export const FooterLink = ({ emoji, title, link }: FooterLinkProps) => {
   const onClick = () => {
     if (window.analytics?.track) {
       window.analytics.track("Link Clicked", {
@@ -22,45 +16,15 @@ const FooterLink = ({ emoji, title, link }: FooterLinkProps) => {
   };
 
   return (
-    <>
-      <div className="link">
-        <a href={link} onClick={onClick}>
+      <div className="mx-auto flex w-46.25 flex-row flex-nowrap justify-end text-[30px] leading-loose">
+        <a
+          href={link}
+          onClick={onClick}
+          className="text-[#337ab7] no-underline hover:underline"
+        >
           {title}
-          <i className={`twa twa-${emoji}`} />
+          <i className={`twa twa-${emoji} ml-3.75 opacity-80`} />
         </a>
       </div>
-
-      <style jsx>{`
-        .link {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
-          justify-content: flex-end;
-
-          font-size: ${TEXT_SIZE};
-          margin: auto;
-          line-height: 2;
-          width: 185px;
-        }
-        a {
-          text-decoration: none;
-          color: ${SECONDARY_ACCENT_COLOR};
-        }
-        i {
-          opacity: 0.8;
-          margin-left: 15px;
-        }
-        p {
-          color: ${SECONDARY_ACCENT_COLOR};
-          opacity: 0.8;
-        }
-        a:hover {
-          color: ${SECONDARY_ACCENT_COLOR_DARK};
-          text-decoration: underline;
-        }
-      `}</style>
-    </>
   );
 };
-
-export default FooterLink;

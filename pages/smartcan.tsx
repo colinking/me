@@ -1,4 +1,4 @@
-import Redirect from "../components/Redirect";
+import { Redirect } from "../components/Redirect";
 
 const Smartcan = () => (
   <Redirect title="Smartcan" url="https://devpost.com/software/smartcan" />

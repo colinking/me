@@ -1,7 +1,6 @@
-import type { ReactNode } from "react";
-
 import snippet from "@segment/snippet";
 import NextHead from "next/head";
+import type { ReactNode } from "react";
 
 const segment = snippet.min({
   apiKey: "KdZKMvdBedsuBs0X6ZfJ5fjxbqcm2SlC",
@@ -20,7 +19,7 @@ type HeadProps = {
   url?: string;
 };
 
-const Head = ({
+export const Head = ({
   children,
   description,
   ogImage,
@@ -62,5 +61,3 @@ const Head = ({
     {children}
   </NextHead>
 );
-
-export default Head;
