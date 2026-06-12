@@ -2,9 +2,9 @@ import NextHead from "next/head";
 import type { ReactNode } from "react";
 
 const defaultOGTitle = "Colin King";
-const defaultDescription = "eng @ airplane.dev";
+const defaultDescription = "software engineer · platform & infrastructure";
 const defaultOGURL = "https://colinking.co";
-const defaultOGImage = "/profile.png#1";
+const defaultOGImage = "https://colinking.co/og.png";
 
 type HeadProps = {
   children?: ReactNode;

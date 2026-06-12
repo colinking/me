@@ -250,9 +250,11 @@ const Wash = () => {
   return (
     <div className="box-border min-h-screen border-t-[5px] border-t-[#65d091]">
       <Head
-        title="Laundry"
+        title="WASH Connect"
         description="Live washer/dryer availability"
         favicon="/wash-favicon.png"
+        ogImage="https://colinking.co/wash-og.png"
+        url="https://colinking.co/wash"
       />
 
       <div className="mx-auto my-10 max-w-105 px-5 text-[#333] [font-family:var(--font-inconsolata)]">
