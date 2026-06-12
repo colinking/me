@@ -1,13 +1,18 @@
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { Head } from "@/components/Head";
-import type { Machine, StatusResponse } from "@/pages/api/wash/status";
+import { UsageHeatmap } from "@/components/UsageHeatmap";
+import type {
+  HeatmapResponse,
+  Machine,
+  StatusResponse,
+} from "@/workers/wash/src/types";
 
 const REFRESH_INTERVAL_MS = 60_000;
 const TICK_INTERVAL_MS = 15_000;
 
 const DEFAULT_CODE = "wsh3345";
 const CODE_STORAGE_KEY = "wash:code";
-// Mirrors the API's validation (pages/api/wash/status.ts).
+// Mirrors the API's validation (workers/wash/src/wash.ts).
 const CODE_PATTERN = /^[a-zA-Z0-9]{1,16}$/;
 
 const loadStoredCode = (): string => {
@@ -142,15 +147,6 @@ const displayFor = (machine: Machine, now: number): Display => {
   }
 };
 
-const summarize = (
-  items: { machine: Machine; display: Display }[],
-  type: Machine["type"],
-) => {
-  const ofType = items.filter(({ machine }) => machine.type === type);
-  const free = ofType.filter(({ display }) => display.free).length;
-  return `${type}s ${free}/${ofType.length}`;
-};
-
 const Wash = () => {
   // null until the stored code is read on mount, so the server render and
   // first client render match.
@@ -161,9 +157,19 @@ const Wash = () => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [draftError, setDraftError] = useState<string | null>(null);
+  const [heatmap, setHeatmap] = useState<HeatmapResponse | null>(null);
 
   useEffect(() => {
     setCode(loadStoredCode());
+  }, []);
+
+  // Usage history changes slowly; fetch once per visit. Failures or an
+  // empty dataset just hide the section.
+  useEffect(() => {
+    fetch("/wash/api/heatmap")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body: HeatmapResponse | null) => setHeatmap(body))
+      .catch(() => setHeatmap(null));
   }, []);
 
   const refresh = useCallback(async () => {
@@ -172,7 +178,7 @@ const Wash = () => {
     }
     try {
       const res = await fetch(
-        `/api/wash/status?code=${encodeURIComponent(code)}`,
+        `/wash/api/status?code=${encodeURIComponent(code)}`,
       );
       const body = (await res.json()) as StatusResponse & { error?: string };
       if (!res.ok) {
@@ -241,7 +247,7 @@ const Wash = () => {
       <Head title="Laundry" description="Live washer/dryer availability" />
 
       <div className="mx-auto my-10 max-w-105 px-5 text-[#333] [font-family:var(--font-inconsolata)]">
-        <h1 className="text-[24px] font-black">Laundry</h1>
+        <h1 className="text-[24px] font-black">WASH Connect</h1>
 
         {code && !editing && (
           <p className="mt-1 text-[15px] text-[#777]">
@@ -273,11 +279,18 @@ const Wash = () => {
           <p className="mt-1 text-[13px] text-[#b05252]">{draftError}</p>
         )}
 
-        {items && (
-          <p className="text-[15px] text-[#777]">
-            {summarize(items, "washer")} &middot; {summarize(items, "dryer")}
-          </p>
-        )}
+        <div className="mt-8 flex items-baseline justify-between">
+          <h2 className="text-[18px] font-black">Laundry machines</h2>
+          {data && (
+            <span className="text-[12px] text-[#999]">
+              updated{" "}
+              {new Date(data.fetchedAt).toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+            </span>
+          )}
+        </div>
 
         {error && data && (
           <p className="mt-4 rounded-md border border-[#e0a0a0] bg-[#e0a0a0]/10 p-3 text-[14px]">
@@ -300,10 +313,10 @@ const Wash = () => {
           </div>
         )}
 
-        {!error && !data && <p className="mt-6 text-[#777]">Loading&hellip;</p>}
+        {!error && !data && <p className="mt-4 text-[#777]">Loading&hellip;</p>}
 
         {items && (
-          <ul className="mt-6 flex flex-col gap-3">
+          <ul className="mt-4 flex flex-col gap-3">
             {items.map(({ machine, display }) => (
               <li
                 key={`${machine.type}-${machine.number}`}
@@ -327,15 +340,14 @@ const Wash = () => {
           </ul>
         )}
 
-        {data && (
-          <p className="mt-6 text-[13px] text-[#999]">
-            updated{" "}
-            {new Date(data.fetchedAt).toLocaleTimeString([], {
-              hour: "numeric",
-              minute: "2-digit",
-            })}
-          </p>
+        {/* The sampler only observes the default location, so the heatmap
+            would be wrong for any other site code. */}
+        {code === DEFAULT_CODE && heatmap && heatmap.buckets.length > 0 && (
+          <div className="mt-10">
+            <UsageHeatmap data={heatmap} />
+          </div>
         )}
+
       </div>
     </div>
   );

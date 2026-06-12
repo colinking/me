@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wash",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-10-01",
+  "observability": { "enabled": true },
+
+  // Poll the WASH backend every 10 minutes. The sampler self-throttles
+  // (MIN_POLL_INTERVAL_SECONDS) so retries or overlapping triggers can't
+  // double-count.
+  "triggers": { "crons": ["*/10 * * * *"] },
+
+  "vars": {
+    // Hour-of-week buckets are computed in the laundry room's timezone.
+    "TIMEZONE": "America/Los_Angeles",
+    "MIN_POLL_INTERVAL_SECONDS": "300"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "WASH_DB",
+      "database_name": "wash",
+      "database_id": "50267718-3073-4eaf-a705-f64ae8545cb4"
+    }
+  ]
+}

@@ -26,3 +26,7 @@ plans/**
 .env
 npm-debug.log*
 next-env.d.ts
+
+# Cloudflare (wrangler local state)
+.wrangler/
+workers/**/node_modules

@@ -1,0 +1,19 @@
+{
+  "name": "wash-worker",
+  "private": true,
+  "description": "Canonical wash backend: status proxy, usage sampler (cron -> D1), heatmap aggregation",
+  "scripts": {
+    "dev": "wrangler dev --test-scheduled --port 8787",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "migrate:local": "wrangler d1 migrations apply wash --local"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.9.13",
+    "@cloudflare/workers-types": "^4.20260411.0",
+    "typescript": "^6.0.2",
+    "vitest": "~3.2.4",
+    "wrangler": "^4.100.0"
+  }
+}

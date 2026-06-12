@@ -21,6 +21,12 @@
       "runtimeArgs": ["run", "start"],
       "port": 4783,
       "autoPort": true
+    },
+    {
+      "name": "wash-worker",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "workers/wash"],
+      "port": 8787
     }
   ]
 }

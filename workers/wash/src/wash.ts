@@ -1,33 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-
-// WASH Connect (Kiosoft) Firebase backend. See docs/WASH_CONNECT_API.md for
-// the endpoint reference and the quirks handled below.
+// WASH Connect (Kiosoft) Firebase backend client. Ported from the Vercel
+// API route (pages/api/wash/status.ts in the site repo) — this is now the
+// canonical implementation. See docs/WASH_CONNECT_API.md for the endpoint
+// reference and the quirks handled below.
 const WASH_API = "https://us-central1-washmobilepay.cloudfunctions.net";
-const DEFAULT_CODE = "wsh3345";
+export const DEFAULT_CODE = "wsh3345";
+export const SITE_CODE_PATTERN = /^[a-zA-Z0-9]{1,16}$/;
 const UPSTREAM_TIMEOUT_MS = 10_000;
-const SITE_CODE_PATTERN = /^[a-zA-Z0-9]{1,16}$/;
 
-export type MachineStatus =
-  | "available"
-  | "in_use"
-  | "should_be_done"
-  | "out_of_service";
+import type { Machine } from "./types";
 
-export type Machine = {
-  number: string;
-  type: "washer" | "dryer";
-  status: MachineStatus;
-  minutesLeft: number | null;
-  endsAt: string | null;
-};
+export type { Machine, MachineStatus, StatusResponse } from "./types";
 
-export type StatusResponse = {
-  location: { code: string; name: string | null };
-  machines: Machine[];
-  fetchedAt: string;
-};
-
-type RawMachine = {
+export type RawMachine = {
   machine_number?: string;
   bt_name?: string;
   type?: string;
@@ -65,12 +49,12 @@ const fetchWash = async (path: string): Promise<Record<string, unknown>> => {
   return body;
 };
 
-type SiteLocation = { uln: string; name: string | null };
+export type SiteLocation = { uln: string; name: string | null };
 
-// Cached per lambda instance; site code → location mappings don't change.
+// Cached per isolate; site code → location mappings don't change.
 const locationCache = new Map<string, SiteLocation>();
 
-const resolveLocation = async (code: string): Promise<SiteLocation> => {
+export const resolveLocation = async (code: string): Promise<SiteLocation> => {
   const cached = locationCache.get(code);
   if (cached) {
     return cached;
@@ -146,7 +130,17 @@ const deriveMachine = (raw: RawMachine, now: Date): Machine | null => {
   return { number, type, status: "in_use", minutesLeft, endsAt };
 };
 
-const fetchMachines = async (uln: string): Promise<Machine[]> => {
+// A machine paired with the upstream fields it was derived from, so the
+// sampler can store both sides without re-parsing raw_json.
+export type ObservedMachine = { machine: Machine; raw: RawMachine };
+
+export type MachinesResult = {
+  machines: ObservedMachine[];
+  // Verbatim get_machine_status_v1 body, for raw archival.
+  rawBody: Record<string, unknown>;
+};
+
+export const fetchMachines = async (uln: string): Promise<MachinesResult> => {
   const body = await fetchWash(
     `/get_machine_status_v1?uln=${encodeURIComponent(uln)}`,
   );
@@ -155,7 +149,7 @@ const fetchMachines = async (uln: string): Promise<Machine[]> => {
   // The same bt_name can appear on multiple floors; first occurrence wins.
   const seen = new Set<string>();
   const now = new Date();
-  const machines: Machine[] = [];
+  const machines: ObservedMachine[] = [];
   for (const floor of Object.values(floors)) {
     for (const raw of floor.machines ?? []) {
       const key = raw.bt_name ?? raw.machine_number;
@@ -167,49 +161,10 @@ const fetchMachines = async (uln: string): Promise<Machine[]> => {
       }
       const machine = deriveMachine(raw, now);
       if (machine) {
-        machines.push(machine);
+        machines.push({ machine, raw });
       }
     }
   }
-  return machines.sort((a, b) => a.number.localeCompare(b.number));
+  machines.sort((a, b) => a.machine.number.localeCompare(b.machine.number));
+  return { machines, rawBody: body };
 };
-
-const handler = async (
-  req: NextApiRequest,
-  res: NextApiResponse<StatusResponse | { error: string }>,
-) => {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    res.status(405).json({ error: "method not allowed" });
-    return;
-  }
-
-  const code =
-    typeof req.query.code === "string" ? req.query.code : DEFAULT_CODE;
-  if (!SITE_CODE_PATTERN.test(code)) {
-    res.status(400).json({ error: "invalid site code" });
-    return;
-  }
-
-  try {
-    const { uln, name } = await resolveLocation(code);
-    const machines = await fetchMachines(uln);
-    // Vercel's CDN keys on the full URL, so each ?code= caches separately.
-    res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=30, stale-while-revalidate=60",
-    );
-    res.status(200).json({
-      location: { code, name },
-      machines,
-      fetchedAt: new Date().toISOString(),
-    });
-  } catch (err) {
-    res.setHeader("Cache-Control", "no-store");
-    res
-      .status(502)
-      .json({ error: err instanceof Error ? err.message : "upstream error" });
-  }
-};
-
-export default handler;
