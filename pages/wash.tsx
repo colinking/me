@@ -1,5 +1,12 @@
-import { type FormEvent, useCallback, useEffect, useState } from "react";
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Head } from "@/components/Head";
+import { analytics } from "@/lib/analytics";
 import { UsageHeatmap } from "@/components/UsageHeatmap";
 import type {
   HeatmapResponse,
@@ -163,6 +170,11 @@ const Wash = () => {
     setCode(loadStoredCode());
   }, []);
 
+  // One event per code viewed per visit, fired on the first successful status
+  // load so it can carry what the visitor actually saw (location, machine
+  // availability). Visits where status never loads still appear as page views.
+  const trackedCode = useRef<string | null>(null);
+
   // An initial failure (or empty dataset) hides the section; a failed
   // periodic refresh keeps the last good data instead of hiding it.
   const refreshHeatmap = useCallback(async () => {
@@ -212,6 +224,23 @@ const Wash = () => {
       // "showing data from X" banner tells the story.
       setError(body.stale ? "live status unavailable" : null);
       setNow(Date.now());
+      if (trackedCode.current !== code) {
+        trackedCode.current = code;
+        const free = (m: Machine) =>
+          m.status === "available" || m.status === "should_be_done";
+        const washers = body.machines.filter((m) => m.type === "washer");
+        const dryers = body.machines.filter((m) => m.type === "dryer");
+        analytics.track("Laundry Status Viewed", {
+          code,
+          locationName: body.location.name,
+          isDefaultCode: code === DEFAULT_CODE,
+          stale: body.stale ?? false,
+          washersAvailable: washers.filter(free).length,
+          washersTotal: washers.length,
+          dryersAvailable: dryers.filter(free).length,
+          dryersTotal: dryers.length,
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "failed to fetch");
     }
@@ -241,6 +270,7 @@ const Wash = () => {
     }
     saveStoredCode(next);
     if (next !== code) {
+      analytics.track("Wash Code Changed", { code: next, previousCode: code });
       // Drop the old location's data so the page shows a clean loading state
       // instead of stale machines under a new code.
       setData(null);

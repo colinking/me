@@ -23,6 +23,13 @@
       "autoPort": true
     },
     {
+      "name": "me-claude-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 4784,
+      "autoPort": true
+    },
+    {
       "name": "wash-worker",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "workers/wash"],
