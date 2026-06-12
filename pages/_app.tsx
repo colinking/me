@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Inconsolata } from "next/font/google";
 import type { AppProps } from "next/app";
@@ -15,6 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className={inconsolata.variable}>
       <Component {...pageProps} />
+      <Analytics />
       <SpeedInsights />
     </div>
   );
