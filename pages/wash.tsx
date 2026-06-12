@@ -242,9 +242,15 @@ const Wash = () => {
     display: displayFor(machine, now),
   }));
 
+  // box-border keeps the top border inside min-h-screen (no preflight, so
+  // the default is content-box, which would overflow by 5px).
   return (
-    <div className="min-h-screen border-t-[5px] border-t-[#65d091]">
-      <Head title="Laundry" description="Live washer/dryer availability" />
+    <div className="box-border min-h-screen border-t-[5px] border-t-[#65d091]">
+      <Head
+        title="Laundry"
+        description="Live washer/dryer availability"
+        favicon="/wash-favicon.png"
+      />
 
       <div className="mx-auto my-10 max-w-105 px-5 text-[#333] [font-family:var(--font-inconsolata)]">
         <h1 className="text-[24px] font-black">WASH Connect</h1>

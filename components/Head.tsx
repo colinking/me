@@ -9,6 +9,7 @@ const defaultOGImage = "/profile.png#1";
 type HeadProps = {
   children?: ReactNode;
   description?: string;
+  favicon?: string;
   ogImage?: string;
   title?: string;
   url?: string;
@@ -17,6 +18,7 @@ type HeadProps = {
 export const Head = ({
   children,
   description,
+  favicon = "/favicon.png",
   ogImage,
   title,
   url,
@@ -26,12 +28,8 @@ export const Head = ({
     <title>{title || ""}</title>
     <meta name="description" content={description || defaultDescription} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/png" href={favicon} />
+    <link rel="apple-touch-icon" href={favicon} />
     <meta property="og:url" content={url || defaultOGURL} />
     <meta property="og:title" content={title || defaultOGTitle} />
     <meta property="og:description" content={description || defaultDescription} />
@@ -41,8 +39,6 @@ export const Head = ({
     <meta property="og:image" content={ogImage || defaultOGImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="theme-color" content="#ffffff" />
 
     {children}
