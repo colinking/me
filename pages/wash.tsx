@@ -163,14 +163,36 @@ const Wash = () => {
     setCode(loadStoredCode());
   }, []);
 
-  // Usage history changes slowly; fetch once per visit. Failures or an
-  // empty dataset just hide the section.
-  useEffect(() => {
-    fetch("/wash/api/heatmap")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((body: HeatmapResponse | null) => setHeatmap(body))
-      .catch(() => setHeatmap(null));
+  // An initial failure (or empty dataset) hides the section; a failed
+  // periodic refresh keeps the last good data instead of hiding it.
+  const refreshHeatmap = useCallback(async () => {
+    try {
+      const res = await fetch("/wash/api/heatmap");
+      if (res.ok) {
+        setHeatmap((await res.json()) as HeatmapResponse);
+      }
+    } catch {
+      // Keep whatever is currently shown.
+    }
   }, []);
+
+  // Same cadence as the status poll; new data only lands when the worker's
+  // cron samples (every 10 minutes), but the worker's short cache window
+  // makes each poll cheap and surfaces fresh samples within a minute or two.
+  useEffect(() => {
+    refreshHeatmap();
+    const interval = setInterval(refreshHeatmap, REFRESH_INTERVAL_MS);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshHeatmap();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [refreshHeatmap]);
 
   const refresh = useCallback(async () => {
     if (!code) {

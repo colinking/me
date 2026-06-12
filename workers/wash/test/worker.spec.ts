@@ -183,7 +183,7 @@ describe("fetch handler", () => {
 
     expect(res.status).toBe(200);
     expect(res.headers.get("Cache-Control")).toBe(
-      "public, s-maxage=3600, stale-while-revalidate=600",
+      "public, s-maxage=60, stale-while-revalidate=600",
     );
     const body = (await res.json()) as Record<string, any>;
     expect(body.timezone).toBe("America/Los_Angeles");

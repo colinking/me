@@ -93,7 +93,10 @@ const handleStatus = async (url: URL, env: Env): Promise<Response> => {
 const handleHeatmap = async (env: Env): Promise<Response> => {
   try {
     const body = await heatmap(env);
-    return json(body, 200, "public, s-maxage=3600, stale-while-revalidate=600");
+    // Same cache window as /status so new cron samples show up within a
+    // minute or two of landing. The query only touches our own D1 — the
+    // WASH upstream is never involved — so the short window is cheap.
+    return json(body, 200, "public, s-maxage=60, stale-while-revalidate=600");
   } catch (err) {
     return json(
       { error: err instanceof Error ? err.message : "query error" },
