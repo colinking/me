@@ -20,6 +20,9 @@ export type StatusResponse = {
   location: { code: string; name: string | null };
   machines: Machine[];
   fetchedAt: string;
+  // Present when the upstream was unreachable and this body was rebuilt
+  // from the sampler's last successful poll; fetchedAt is that poll time.
+  stale?: true;
 };
 
 export type HeatmapBucket = {

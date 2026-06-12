@@ -185,7 +185,10 @@ const Wash = () => {
         throw new Error(body.error ?? `HTTP ${res.status}`);
       }
       setData(body);
-      setError(null);
+      // Stale bodies are the worker's D1 fallback (upstream down);
+      // fetchedAt is the archived poll time, so the existing
+      // "showing data from X" banner tells the story.
+      setError(body.stale ? "live status unavailable" : null);
       setNow(Date.now());
     } catch (err) {
       setError(err instanceof Error ? err.message : "failed to fetch");
@@ -356,6 +359,14 @@ const Wash = () => {
           </div>
         )}
 
+        <p className="mt-10 text-[13px]">
+          <a
+            href="mailto:me@colinking.co?subject=Laundry%20page%20feedback"
+            className="text-[#777] no-underline hover:underline"
+          >
+            [feedback]
+          </a>
+        </p>
       </div>
     </div>
   );

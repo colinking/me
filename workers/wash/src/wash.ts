@@ -5,7 +5,10 @@
 const WASH_API = "https://us-central1-washmobilepay.cloudfunctions.net";
 export const DEFAULT_CODE = "wsh3345";
 export const SITE_CODE_PATTERN = /^[a-zA-Z0-9]{1,16}$/;
-const UPSTREAM_TIMEOUT_MS = 10_000;
+// Successful upstream calls complete in well under a second, but the
+// backend intermittently hangs for 10s+ (~hourly in production). A short
+// deadline plus one retry beats waiting out a hang that never resolves.
+const UPSTREAM_TIMEOUT_MS = 4_000;
 
 import type { Machine } from "./types";
 
@@ -25,16 +28,22 @@ type RawFloor = {
   machines?: RawMachine[];
 };
 
-const fetchWash = async (path: string): Promise<Record<string, unknown>> => {
+const fetchWashOnce = async (path: string): Promise<Record<string, unknown>> => {
   const res = await fetch(`${WASH_API}${path}`, {
     headers: { provider: "kiosoft" },
     signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
   });
   if (!res.ok) {
-    throw new Error(`WASH API returned HTTP ${res.status} for ${path}`);
+    const err = new Error(`WASH API returned HTTP ${res.status} for ${path}`);
+    if (res.status >= 500) {
+      (err as { retryable?: boolean }).retryable = true;
+    }
+    throw err;
   }
   const body = (await res.json()) as Record<string, unknown>;
   // Some endpoints embed an error status in the body even on HTTP 200.
+  // Those (and errorCode bodies) are real answers, not transient faults,
+  // so they are never retried.
   if (
     typeof body.status === "number" &&
     body.status !== 200 &&
@@ -49,10 +58,35 @@ const fetchWash = async (path: string): Promise<Record<string, unknown>> => {
   return body;
 };
 
+// Timeouts (AbortSignal.timeout → TimeoutError), transport failures
+// (fetch → TypeError), and 5xx responses are transient; one retry covers
+// the intermittent hang without piling on a struggling backend.
+const isRetryable = (err: unknown): boolean =>
+  err instanceof Error &&
+  (err.name === "TimeoutError" ||
+    err.name === "TypeError" ||
+    (err as { retryable?: boolean }).retryable === true);
+
+const fetchWash = async (path: string): Promise<Record<string, unknown>> => {
+  try {
+    return await fetchWashOnce(path);
+  } catch (err) {
+    if (!isRetryable(err)) {
+      throw err;
+    }
+    return fetchWashOnce(path);
+  }
+};
+
 export type SiteLocation = { uln: string; name: string | null };
 
 // Cached per isolate; site code → location mappings don't change.
 const locationCache = new Map<string, SiteLocation>();
+
+// Best-effort lookup for fallback responses built while the upstream is
+// down (no network call to resolve the name is possible then).
+export const cachedLocation = (code: string): SiteLocation | undefined =>
+  locationCache.get(code);
 
 export const resolveLocation = async (code: string): Promise<SiteLocation> => {
   const cached = locationCache.get(code);
@@ -140,15 +174,17 @@ export type MachinesResult = {
   rawBody: Record<string, unknown>;
 };
 
-export const fetchMachines = async (uln: string): Promise<MachinesResult> => {
-  const body = await fetchWash(
-    `/get_machine_status_v1?uln=${encodeURIComponent(uln)}`,
-  );
+// Derive machines from a get_machine_status_v1 body. Also used to rebuild
+// status from an archived poll's raw_json, re-deriving against the current
+// clock (so a cycle that ended since the poll reads should_be_done).
+export const parseMachines = (
+  body: Record<string, unknown>,
+  now: Date,
+): ObservedMachine[] => {
   const floors = (body.data ?? {}) as Record<string, RawFloor>;
 
   // The same bt_name can appear on multiple floors; first occurrence wins.
   const seen = new Set<string>();
-  const now = new Date();
   const machines: ObservedMachine[] = [];
   for (const floor of Object.values(floors)) {
     for (const raw of floor.machines ?? []) {
@@ -166,5 +202,12 @@ export const fetchMachines = async (uln: string): Promise<MachinesResult> => {
     }
   }
   machines.sort((a, b) => a.machine.number.localeCompare(b.machine.number));
-  return { machines, rawBody: body };
+  return machines;
+};
+
+export const fetchMachines = async (uln: string): Promise<MachinesResult> => {
+  const body = await fetchWash(
+    `/get_machine_status_v1?uln=${encodeURIComponent(uln)}`,
+  );
+  return { machines: parseMachines(body, new Date()), rawBody: body };
 };

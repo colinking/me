@@ -41,6 +41,9 @@ export const bucketFor = (
 // on the next poll of an available machine).
 //
 // Numerator: busy minutes from cycle intervals, split at hour boundaries.
+// In-flight cycles count their full scheduled interval through ends_at —
+// a machine we know is running is busy for its expected runtime; machines
+// without a known cycle are assumed idle for the rest of the hour.
 // Denominator: observed machine-minutes — each calendar hour in which a
 // machine was polled (and not out_of_service) credits 60 minutes to that
 // hour's bucket. Buckets with no observed time are omitted. Cycles in
@@ -121,13 +124,13 @@ export const heatmap = async (env: Env): Promise<HeatmapResponse> => {
   }
 
   // Busy milliseconds per bucket, from cycle intervals split at UTC hour
-  // boundaries. In-flight cycles only count time elapsed so far; the
-  // remainder accrues once later polls confirm it.
-  const nowMs = Date.now();
+  // boundaries. In-flight cycles count through their scheduled ends_at;
+  // segments in hours with no coverage yet drop out until those hours are
+  // first polled.
   const busyMs = new Map<string, number>();
   for (const row of cycles.results ?? []) {
     const startMs = Date.parse(row.start_time);
-    const endMs = Math.min(Date.parse(row.ends_at), nowMs);
+    const endMs = Date.parse(row.ends_at);
     if (
       Number.isNaN(startMs) ||
       Number.isNaN(endMs) ||

@@ -124,10 +124,12 @@ describe("samplePoll", () => {
   });
 
   it("records failed polls with the error", async () => {
+    // 5xx is retried once, so both attempts need an intercept.
     fetchMock
       .get(UPSTREAM)
       .intercept({ path: /^\/get_machine_status_v1/ })
-      .reply(500, {});
+      .reply(500, {})
+      .times(2);
     const outcome = await samplePoll(env, "test");
     expect(outcome.kind).toBe("failed");
 
@@ -188,16 +190,84 @@ describe("fetch handler", () => {
     expect(body.polls).toBe(1);
     expect(typeof body.since).toBe("string");
     // One observed hour (Sun 8pm PDT): washer + dryer polled once each =
-    // 120 observed minutes; the dryer cycle has elapsed 5 busy minutes
-    // (03:25Z to the 03:30Z "now") — the rest accrues on later polls.
+    // 120 observed minutes; the dryer's cycle (03:25Z-04:10Z) counts its
+    // expected runtime, 35 minutes of which fall in this hour — the 04Z
+    // remainder drops out until that hour is first polled.
     expect(body.buckets).toHaveLength(1);
     expect(body.buckets[0]).toMatchObject({
       dow: 6,
       hour: 20,
-      busy: 5,
+      busy: 35,
       total: 120,
       hours: 1,
     });
+  });
+
+  it("retries once and succeeds after a transient 5xx", async () => {
+    fetchMock
+      .get(UPSTREAM)
+      .intercept({ path: /^\/get_machine_status_v1/ })
+      .reply(500, {});
+    mockMachines([washerAvailable]);
+
+    const ctx = createExecutionContext();
+    const res = await worker.fetch(
+      new Request("https://wash.local/status") as never,
+      env,
+      ctx,
+    );
+    await waitOnExecutionContext(ctx);
+
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as Record<string, any>;
+    expect(body.stale).toBeUndefined();
+    expect(body.machines).toHaveLength(1);
+  });
+
+  it("falls back to the last successful poll when the upstream stays down", async () => {
+    mockMachines([washerAvailable, dryerRunning()]);
+    await samplePoll(env, "test");
+
+    fetchMock
+      .get(UPSTREAM)
+      .intercept({ path: /^\/get_machine_status_v1/ })
+      .reply(500, {})
+      .times(2);
+
+    const ctx = createExecutionContext();
+    const res = await worker.fetch(
+      new Request("https://wash.local/status") as never,
+      env,
+      ctx,
+    );
+    await waitOnExecutionContext(ctx);
+
+    expect(res.status).toBe(200);
+    // Stale bodies must not linger in shared caches.
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    const body = (await res.json()) as Record<string, any>;
+    expect(body.stale).toBe(true);
+    expect(body.fetchedAt).toBe(NOW.toISOString());
+    expect(body.location.code).toBe("wsh3345");
+    expect(body.machines).toHaveLength(2);
+    expect(body.machines[1].status).toBe("in_use");
+  });
+
+  it("still returns 502 for site codes with no poll history", async () => {
+    fetchMock
+      .get(UPSTREAM)
+      .intercept({ path: /^\/get_machine_status_v1/ })
+      .reply(500, {})
+      .times(2);
+
+    const ctx = createExecutionContext();
+    const res = await worker.fetch(
+      new Request("https://wash.local/status?code=other42") as never,
+      env,
+      ctx,
+    );
+    await waitOnExecutionContext(ctx);
+    expect(res.status).toBe(502);
   });
 
   it("rejects invalid site codes", async () => {
@@ -221,12 +291,12 @@ describe("heatmap", () => {
     expect(result.polls).toBe(1);
     expect(result.since).not.toBeNull();
     // The broken dryer contributes neither coverage nor cycles, so the
-    // observed hour holds 2 machines x 60 min; the running dryer has
-    // elapsed 5 busy minutes so far.
+    // observed hour holds 2 machines x 60 min; the running dryer counts
+    // its expected runtime, 35 minutes of which fall in this hour.
     expect(result.buckets).toHaveLength(1);
     // 2 machines x 60 min = 120 machine-minutes, but 1 wall-clock hour.
-    expect(result.buckets[0]).toMatchObject({ busy: 5, total: 120, hours: 1 });
-    expect(result.buckets[0].utilization).toBeCloseTo(5 / 120);
+    expect(result.buckets[0]).toMatchObject({ busy: 35, total: 120, hours: 1 });
+    expect(result.buckets[0].utilization).toBeCloseTo(35 / 120);
   });
 
   it("splits a finished cycle across hour buckets", async () => {
