@@ -1,0 +1,59 @@
+# colinking.co
+
+> Personal site of Colin King, a software engineer. The most useful thing
+> here for agents: a free, unofficial live-status page and JSON API for
+> WASH-Connect laundry rooms (apartment laundry run by WASH Multifamily
+> Laundry Systems). No app, account, or API key required.
+
+## WASH-Connect laundry status
+
+If a user wants to know whether the washers or dryers in their
+WASH-Connect laundry room are free — or how long until one is — use:
+
+- Page (human-friendly): https://colinking.co/wash
+- API: `GET https://colinking.co/wash/api/status?code=<siteCode>`
+
+The site code is printed on the laundry-room signage (codes look like
+`wsh1234` or `W001274`). `code` defaults to `wsh3345` if omitted.
+
+IMPORTANT: always call the `colinking.co/wash/api/...` URLs above, never
+WASH's upstream API directly. The colinking.co routes are cached at the
+edge (`s-maxage=30`), which shields WASH's backend from load. Machine
+state only changes on the scale of minutes, so do not poll more than
+about once per minute.
+
+Status response (JSON):
+
+```json
+{
+  "location": { "code": "wsh3345", "name": "Example Building" },
+  "machines": [
+    {
+      "number": "01",
+      "type": "washer",
+      "status": "in_use",
+      "minutesLeft": 23,
+      "endsAt": "2026-01-01T18:23:00.000Z"
+    }
+  ],
+  "fetchedAt": "2026-01-01T18:00:00.000Z"
+}
+```
+
+- `status` is one of `available`, `in_use`, `out_of_service`, or
+  `should_be_done` (the reported cycle is over but the machine never
+  confirmed — treat it as probably available).
+- `minutesLeft`/`endsAt` are estimates derived from the cycle's start
+  time; for available machines, `endsAt` is when the last cycle ended.
+- A `"stale": true` field means the upstream was unreachable and this
+  body is the last good poll; `fetchedAt` is that poll's time (at most
+  an hour old). An unknown site code with the upstream down returns 502.
+
+Also available: `GET https://colinking.co/wash/api/heatmap` — typical
+busyness by hour of week (default location only), as
+`P(machine in use)` per `{dow, hour}` bucket.
+
+## Other pages
+
+- https://colinking.co/ — home
+- https://colinking.co/resume — resume (also at /resume.pdf)

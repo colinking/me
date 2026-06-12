@@ -1,13 +1,14 @@
 import {
   type FormEvent,
+  type ReactNode,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
 import { Head } from "@/components/Head";
-import { analytics } from "@/lib/analytics";
 import { UsageHeatmap } from "@/components/UsageHeatmap";
+import { analytics } from "@/lib/analytics";
 import type {
   HeatmapResponse,
   Machine,
@@ -21,6 +22,97 @@ const DEFAULT_CODE = "wsh3345";
 const CODE_STORAGE_KEY = "wash:code";
 // Mirrors the API's validation (workers/wash/src/wash.ts).
 const CODE_PATTERN = /^[a-zA-Z0-9]{1,16}$/;
+
+const PAGE_TITLE =
+  "WASH Connect Laundry Status — Live Washer & Dryer Availability";
+const PAGE_DESCRIPTION =
+  "Check live washer and dryer availability in any WASH-Connect laundry " +
+  "room — free, no app or account needed. Enter your site code to see " +
+  "which machines are open and how long until one frees up.";
+
+// Rendered both as visible copy and as FAQPage JSON-LD, so the structured
+// data can never drift from what's on the page (a Google requirement).
+// `a` is the plain-text answer used in both; `rich` optionally replaces the
+// visible rendering when the answer needs markup (e.g. a mailto link).
+const FAQ: { q: string; a: string; rich?: ReactNode }[] = [
+  {
+    q: "Does this work for my building?",
+    a:
+      "Yes, if your laundry room is run by WASH (the machines and signage " +
+      "say WASH-Connect). Use the change button above to enter your " +
+      "building's site code and you'll see your own machines.",
+  },
+  {
+    q: "How do I find my site code?",
+    a:
+      "It's printed on the signage or stickers in your laundry room — " +
+      "codes look like wsh1234 or W001274.",
+  },
+  {
+    q: "How fresh is the data?",
+    a:
+      "Status refreshes about once a minute."
+  },
+  {
+    q: "Why does a machine show as available when it is not?",
+    a:
+      "There are two known issues. First, time remaining is based on the " +
+      "machine's original estimate, and machines sometimes underestimate " +
+      "how long a load will take — so you may find a machine still " +
+      "running for a few more minutes. Second, machines can occasionally " +
+      "fail to report a run to WASH, making them look idle while they're " +
+      "running. This is relatively rare.",
+  },
+  {
+    q: "Why is there no historical usage data for my code?",
+    a:
+      "Historical usage is only recorded for an allowlisted set of site " +
+      "codes, to avoid putting unnecessary load on WASH's backend. Email " +
+      "me@colinking.co if you'd like your code added.",
+    rich: (
+      <>
+        Historical usage is only recorded for an allowlisted set of site
+        codes, to avoid putting unnecessary load on WASH&apos;s backend.{" "}
+        <a
+          href="mailto:me@colinking.co?subject=Add%20my%20WASH%20code"
+          className="text-[#65d091] no-underline hover:text-[#51a774] hover:underline"
+        >
+          Email me
+        </a>{" "}
+        if you&apos;d like your code added.
+      </>
+    ),
+  },
+  {
+    q: "Is this affiliated with WASH?",
+    a:
+      "No — this is an unofficial, independent tool. It is not endorsed " +
+      "by or associated with WASH Multifamily Laundry Systems.",
+  },
+];
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      name: "WASH Connect Laundry Status",
+      url: "https://colinking.co/wash",
+      description: PAGE_DESCRIPTION,
+      applicationCategory: "UtilityApplication",
+      operatingSystem: "Any",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQ.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  ],
+};
 
 const loadStoredCode = (): string => {
   try {
@@ -302,15 +394,21 @@ const Wash = () => {
   return (
     <div className="box-border min-h-screen border-t-[5px] border-t-[#65d091]">
       <Head
-        title="WASH Connect"
-        description="Live washer/dryer availability"
+        title={PAGE_TITLE}
+        description={PAGE_DESCRIPTION}
         favicon="/wash-favicon.png"
         ogImage="https://colinking.co/wash-og.png"
         url="https://colinking.co/wash"
-      />
+      >
+        <script
+          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON.stringify of page-owned data
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+        />
+      </Head>
 
       <div className="mx-auto my-10 max-w-105 px-5 text-[#333] [font-family:var(--font-inconsolata)]">
-        <h1 className="text-[24px] font-black">WASH Connect</h1>
+        <h1 className="text-[24px] font-black">WASH Connect Laundry Status</h1>
 
         {code && !editing && (
           <p className="mt-1 text-[15px] text-[#777]">
@@ -413,10 +511,58 @@ const Wash = () => {
           </div>
         )}
 
-        <p className="mt-10 text-[13px]">
+        {/* Static, server-rendered copy: this is what search engines and
+            agents (which often don't run JS) index — the live status above
+            is all client-fetched. Mirrored in the FAQPage JSON-LD. */}
+        <section className="mt-12 border-t border-[#eee] pt-6 text-[14px] text-[#555]">
+          <h2 className="text-[16px] font-black text-[#333]">
+            Check WASH-Connect laundry machines without the app
+          </h2>
+          <p className="mt-2">
+            This page shows live washer and dryer availability for laundry
+            rooms run by WASH (
+            <a
+              href="https://www.getwashconnect.com"
+              className="text-[#65d091] no-underline hover:text-[#51a774] hover:underline"
+            >
+              WASH-Connect
+            </a>
+            ) — free, with no app, account, or login. See which machines are
+            open, which are in use, and roughly how many minutes are left
+            before you haul your laundry down.
+          </p>
+          {/* Collapsed by default via <details>: the answers are still in the
+              server-rendered HTML, which is what crawlers index. */}
+          {FAQ.map(({ q, a, rich }) => (
+            <details key={q} className="mt-4">
+              <summary className="cursor-pointer">
+                {/* No preflight: strip the h3's UA margins/size so it sits
+                    inline next to the disclosure marker. */}
+                <h3 className="m-0 ml-1 inline text-[15px] font-black text-[#333]">
+                  {q}
+                </h3>
+              </summary>
+              <p className="mt-1 mb-0">{rich ?? a}</p>
+            </details>
+          ))}
+        </section>
+
+        <p className="mt-8 text-[13px] text-[#777]">
+          Built by{" "}
+          <a href="/" className="text-inherit no-underline hover:underline">
+            Colin King
+          </a>{" "}
+          &middot;{" "}
+          <a
+            href="https://github.com/colinking/me"
+            className="text-inherit no-underline hover:underline"
+          >
+            [github]
+          </a>{" "}
+          &middot;{" "}
           <a
             href="mailto:me@colinking.co?subject=Laundry%20page%20feedback"
-            className="text-[#777] no-underline hover:underline"
+            className="text-inherit no-underline hover:underline"
           >
             [feedback]
           </a>
