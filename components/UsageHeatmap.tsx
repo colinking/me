@@ -22,7 +22,8 @@ const formatSince = (iso: string): string =>
   });
 
 // Lerp from near-white to deep amber (the "in use" hue family), weighted
-// relative to the busiest cell.
+// relative to the busiest cell. Cells with no observations render as a
+// bare outline instead, so filled-but-idle still reads as data.
 const heatColor = (utilization: number, max: number): string => {
   const t = max > 0 ? utilization / max : 0;
   const from = [246, 245, 243];
@@ -31,7 +32,11 @@ const heatColor = (utilization: number, max: number): string => {
   return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
 };
 
-const NO_DATA_COLOR = "#ececea";
+// No data yet: a faint outline, recessive next to any filled cell.
+const NO_DATA_STYLE = {
+  backgroundColor: "transparent",
+  border: "1px solid #00000012",
+} as const;
 
 type Hovered = { day: number; hour: number } | null;
 
@@ -102,11 +107,11 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
                     className={`h-full w-full cursor-default appearance-none border-none p-0 rounded-[3px] ${
                       isHovered ? "ring-2 ring-[#333]" : ""
                     }`}
-                    style={{
-                      backgroundColor: bucket
-                        ? heatColor(bucket.utilization, max)
-                        : NO_DATA_COLOR,
-                    }}
+                    style={
+                      bucket
+                        ? { backgroundColor: heatColor(bucket.utilization, max) }
+                        : NO_DATA_STYLE
+                    }
                     onMouseEnter={() => setHovered({ day, hour })}
                     onMouseLeave={() => setHovered(null)}
                     onFocus={() => setHovered({ day, hour })}
@@ -135,11 +140,14 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
 
       <div className="mt-3 flex items-center justify-end gap-1.5 text-[12px] text-[#999]">
         <span>less busy</span>
+        {/* The scale is relative to the busiest cell, so the legend shows
+            the fixed ramp — not data-dependent colors, which would all
+            collapse to white when the busiest observed cell is idle. */}
         {[0.1, 0.3, 0.5, 0.75, 1].map((t) => (
           <span
             key={t}
             className="h-3 w-3 rounded-[3px]"
-            style={{ backgroundColor: heatColor(t * max, max) }}
+            style={{ backgroundColor: heatColor(t, 1) }}
           />
         ))}
         <span>more busy</span>

@@ -316,7 +316,9 @@ const Wash = () => {
         {!error && !data && <p className="mt-4 text-[#777]">Loading&hellip;</p>}
 
         {items && (
-          <ul className="mt-4 flex flex-col gap-3">
+          // No Tailwind preflight in this project: strip the UA list
+          // padding so cards align with the headings.
+          <ul className="mt-4 flex list-none flex-col gap-3 p-0">
             {items.map(({ machine, display }) => (
               <li
                 key={`${machine.type}-${machine.number}`}
