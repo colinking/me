@@ -125,9 +125,7 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
                       <span className="block text-[11px] text-[#bbb]">
                         {dayLabel} {formatHour(hour)}&ndash;
                         {formatHour((hour + 1) % 24)}
-                        {bucket && (
-                          <> &middot; {Math.round(bucket.total / 60)}h observed</>
-                        )}
+                        {bucket && <> &middot; {bucket.hours}h observed</>}
                       </span>
                     </div>
                   )}

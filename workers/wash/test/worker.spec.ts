@@ -196,6 +196,7 @@ describe("fetch handler", () => {
       hour: 20,
       busy: 5,
       total: 120,
+      hours: 1,
     });
   });
 
@@ -223,7 +224,8 @@ describe("heatmap", () => {
     // observed hour holds 2 machines x 60 min; the running dryer has
     // elapsed 5 busy minutes so far.
     expect(result.buckets).toHaveLength(1);
-    expect(result.buckets[0]).toMatchObject({ busy: 5, total: 120 });
+    // 2 machines x 60 min = 120 machine-minutes, but 1 wall-clock hour.
+    expect(result.buckets[0]).toMatchObject({ busy: 5, total: 120, hours: 1 });
     expect(result.buckets[0].utilization).toBeCloseTo(5 / 120);
   });
 
@@ -248,8 +250,8 @@ describe("heatmap", () => {
 
     const result = await heatmap(env);
     expect(result.buckets).toEqual([
-      expect.objectContaining({ dow: 6, hour: 19, busy: 20, total: 60 }),
-      expect.objectContaining({ dow: 6, hour: 20, busy: 20, total: 60 }),
+      expect.objectContaining({ dow: 6, hour: 19, busy: 20, total: 60, hours: 1 }),
+      expect.objectContaining({ dow: 6, hour: 20, busy: 20, total: 60, hours: 1 }),
     ]);
   });
 });

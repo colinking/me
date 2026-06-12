@@ -27,6 +27,7 @@ export type HeatmapBucket = {
   hour: number; // 0..23
   busy: number; // busy machine-minutes, from cycle-interval overlap
   total: number; // observed machine-minutes (excludes out_of_service)
+  hours: number; // distinct wall-clock hours observed (~weeks of data)
   utilization: number; // busy / total
 };
 

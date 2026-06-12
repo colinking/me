@@ -104,11 +104,20 @@ export const heatmap = async (env: Env): Promise<HeatmapResponse> => {
     return key;
   };
 
-  // Observed machine-minutes per bucket.
+  // Observed machine-minutes per bucket (the utilization denominator),
+  // plus distinct wall-clock hours (the human-facing sample size: with 3
+  // machines, one watched Monday 9-10pm is 180 machine-minutes but 1 hour).
   const observedMin = new Map<string, number>();
+  const observedHours = new Map<string, Set<string>>();
   for (const row of coverage.results ?? []) {
     const key = bucketKeyFor(row.utc_hour);
     observedMin.set(key, (observedMin.get(key) ?? 0) + 60);
+    let hours = observedHours.get(key);
+    if (!hours) {
+      hours = new Set();
+      observedHours.set(key, hours);
+    }
+    hours.add(row.utc_hour);
   }
 
   // Busy milliseconds per bucket, from cycle intervals split at UTC hour
@@ -148,7 +157,14 @@ export const heatmap = async (env: Env): Promise<HeatmapResponse> => {
           Math.round((busyMs.get(key) ?? 0) / 60_000),
           total,
         );
-        return { dow, hour, busy, total, utilization: busy / total };
+        return {
+          dow,
+          hour,
+          busy,
+          total,
+          hours: observedHours.get(key)?.size ?? 0,
+          utilization: busy / total,
+        };
       })
       .sort((a, b) => a.dow - b.dow || a.hour - b.hour),
   };
