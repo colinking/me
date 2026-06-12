@@ -1,6 +1,14 @@
 @import "tailwindcss/theme";
 @import "tailwindcss/utilities";
 
+html {
+  /* Pin light rendering so forced/auto dark mode (e.g. Chrome on Android)
+     doesn't invert the page. `only light` opts out of auto-darkening. */
+  color-scheme: only light;
+  background: #fff;
+}
+
 body {
   margin: 0;
+  background: #fff;
 }
