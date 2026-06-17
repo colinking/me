@@ -1,8 +1,41 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import type { HeatmapBucket, HeatmapResponse } from "@/workers/wash/src/types";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
+
+const WEEKDAY_TO_DOW: Record<string, number> = {
+  Mon: 0,
+  Tue: 1,
+  Wed: 2,
+  Thu: 3,
+  Fri: 4,
+  Sat: 5,
+  Sun: 6,
+};
+
+// Mirror the worker's `bucketFor`: which (dow, hour) cell is "now" in the
+// location's timezone, so the highlight tracks the laundry room's clock
+// rather than the visitor's.
+const currentBucket = (timeZone: string): { dow: number; hour: number } | null => {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      weekday: "short",
+      hour: "numeric",
+      hourCycle: "h23",
+    }).formatToParts(new Date());
+    const weekday = parts.find((p) => p.type === "weekday")?.value ?? "";
+    const hour = Number(parts.find((p) => p.type === "hour")?.value ?? Number.NaN);
+    const dow = WEEKDAY_TO_DOW[weekday];
+    if (dow === undefined || Number.isNaN(hour)) {
+      return null;
+    }
+    return { dow, hour };
+  } catch {
+    return null;
+  }
+};
 
 const formatHour = (hour: number): string => {
   if (hour === 0) {
@@ -42,6 +75,16 @@ type Hovered = { day: number; hour: number } | null;
 
 export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
   const [hovered, setHovered] = useState<Hovered>(null);
+
+  // Computed client-side (and refreshed each minute) so it follows the clock
+  // and avoids an SSR/client hydration mismatch at the hour boundary.
+  const [now, setNow] = useState<{ dow: number; hour: number } | null>(null);
+  useEffect(() => {
+    const update = () => setNow(currentBucket(data.timezone));
+    update();
+    const id = setInterval(update, 60_000);
+    return () => clearInterval(id);
+  }, [data.timezone]);
 
   const { buckets, max } = useMemo(() => {
     const map = new Map<string, HeatmapBucket>();
@@ -96,6 +139,7 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
             {HOURS.map((hour) => {
               const bucket = buckets.get(`${day}-${hour}`);
               const isHovered = hovered?.day === day && hovered?.hour === hour;
+              const isNow = now?.dow === day && now?.hour === hour;
               const label = bucket
                 ? `${Math.round(bucket.utilization * 100)}% of machines in use`
                 : "no data yet";
@@ -103,15 +147,14 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
                 <div key={`${dayLabel}-${hour}`} className="relative aspect-square">
                   <button
                     type="button"
-                    aria-label={`${dayLabel} ${formatHour(hour)}: ${label}`}
-                    className={`h-full w-full cursor-default appearance-none border-none p-0 rounded-[3px] ${
-                      isHovered ? "ring-2 ring-[#333]" : ""
-                    }`}
-                    style={
-                      bucket
+                    aria-label={`${dayLabel} ${formatHour(hour)}: ${label}${isNow ? " (now)" : ""}`}
+                    className="h-full w-full cursor-default appearance-none border-none p-0 rounded-[3px]"
+                    style={{
+                      ...(bucket
                         ? { backgroundColor: heatColor(bucket.utilization, max) }
-                        : NO_DATA_STYLE
-                    }
+                        : NO_DATA_STYLE),
+                      boxShadow: isHovered ? "0 0 0 2px #333" : undefined,
+                    }}
                     onMouseEnter={() => setHovered({ day, hour })}
                     onMouseLeave={() => setHovered(null)}
                     onFocus={() => setHovered({ day, hour })}
@@ -125,6 +168,7 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
                       <span className="block text-[11px] text-[#bbb]">
                         {dayLabel} {formatHour(hour)}&ndash;
                         {formatHour((hour + 1) % 24)}
+                        {isNow && <> &middot; now</>}
                         {bucket && <> &middot; {bucket.hours}h observed</>}
                       </span>
                     </div>
