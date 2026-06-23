@@ -64,6 +64,14 @@ const FAQ: { q: string; a: string; rich?: ReactNode }[] = [
       "running. This is relatively rare.",
   },
   {
+    q: "Why doesn't my laundry room show any machines?",
+    a:
+      "Some WASH rooms use payment-only readers that don't report live " +
+      "machine status to the data feed this page reads. For those rooms you " +
+      "can confirm the location exists, but machine availability can't be " +
+      "shown — only rooms with status-reporting hardware appear here.",
+  },
+  {
     q: "Why is there no historical usage data for my code?",
     a:
       "Historical usage is only recorded for an allowlisted set of site " +
@@ -480,7 +488,18 @@ const Wash = () => {
 
         {!error && !data && <p className="mt-4 text-[#777]">Loading&hellip;</p>}
 
-        {items && (
+        {/* `connect`-tier rooms use payment-only hardware that never reports
+            machine status to the upstream feed, so machines comes back empty.
+            Explain the gap rather than showing a blank list. See
+            docs/WASH_CONNECT_API.md. */}
+        {data?.location.deviceType === "connect" && !items?.length && (
+          <p className="mt-4 rounded-md border border-[#e8c36a] bg-[#e8c36a]/10 p-3 text-[14px]">
+            This laundry room&apos;s machines don&apos;t publish live
+            availability data, so machine status can&apos;t be shown here.
+          </p>
+        )}
+
+        {items && items.length > 0 && (
           // No Tailwind preflight in this project: strip the UA list
           // padding so cards align with the headings.
           <ul className="mt-4 flex list-none flex-col gap-3 p-0">

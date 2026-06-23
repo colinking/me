@@ -21,6 +21,10 @@ plans/**
 .vercel
 .env*.local
 
+# WASH Connect scraped data (raw addresses; don't commit)
+scripts/wash/cache.json
+scripts/wash/cache.json.tmp
+
 # misc
 .DS_Store
 .env

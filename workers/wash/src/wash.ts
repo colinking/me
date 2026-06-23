@@ -78,7 +78,13 @@ const fetchWash = async (path: string): Promise<Record<string, unknown>> => {
   }
 };
 
-export type SiteLocation = { uln: string; name: string | null };
+export type SiteLocation = {
+  uln: string;
+  name: string | null;
+  // KioSoft reader tier (`prime` | `connect` | …), lowercased. Only `prime`
+  // publishes live machine status. See docs/WASH_CONNECT_API.md.
+  deviceType: string | null;
+};
 
 // Cached per isolate; site code → location mappings don't change.
 const locationCache = new Map<string, SiteLocation>();
@@ -95,14 +101,18 @@ export const resolveLocation = async (code: string): Promise<SiteLocation> => {
   }
   const body = await fetchWash(`/locations?srcode=${encodeURIComponent(code)}`);
   const location = body.location as
-    | { uln?: string; location_name?: string }
+    | { uln?: string; location_name?: string; device_type?: string }
     | undefined;
   // The uln comes back with trailing whitespace; always strip it.
   const uln = location?.uln?.trim();
   if (!uln) {
     throw new Error(`unknown site code: ${code}`);
   }
-  const resolved = { uln, name: location?.location_name?.trim() || null };
+  const resolved = {
+    uln,
+    name: location?.location_name?.trim() || null,
+    deviceType: location?.device_type?.trim().toLowerCase() || null,
+  };
   locationCache.set(code, resolved);
   return resolved;
 };

@@ -69,7 +69,11 @@ beforeAll(() => {
     .intercept({ path: /^\/locations/ })
     .reply(200, {
       status: 200,
-      location: { uln: "CA7521809   ", location_name: "20 Crestline Dr" },
+      location: {
+        uln: "CA7521809   ",
+        location_name: "20 Crestline Dr",
+        device_type: "prime",
+      },
     })
     .persist();
 });
@@ -157,7 +161,11 @@ describe("fetch handler", () => {
       "public, s-maxage=30, stale-while-revalidate=60",
     );
     const body = (await res.json()) as Record<string, any>;
-    expect(body.location).toEqual({ code: "wsh3345", name: "20 Crestline Dr" });
+    expect(body.location).toEqual({
+      code: "wsh3345",
+      name: "20 Crestline Dr",
+      deviceType: "prime",
+    });
     expect(body.machines).toHaveLength(2);
     expect(body.machines[0]).toMatchObject({
       number: "001",

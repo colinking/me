@@ -17,7 +17,15 @@ export type Machine = {
 };
 
 export type StatusResponse = {
-  location: { code: string; name: string | null };
+  location: {
+    code: string;
+    name: string | null;
+    // KioSoft reader tier, lowercased from the upstream `device_type`.
+    // Only `prime` publishes live machine status; `connect` returns no
+    // machines (payment-only hardware). null when unknown/unrecognized.
+    // See docs/WASH_CONNECT_API.md.
+    deviceType: string | null;
+  };
   machines: Machine[];
   fetchedAt: string;
   // Present when the upstream was unreachable and this body was rebuilt

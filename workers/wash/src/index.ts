@@ -52,7 +52,11 @@ const statusFromLastPoll = async (
     new Date(),
   );
   return {
-    location: { code, name: cachedLocation(code)?.name ?? null },
+    location: {
+      code,
+      name: cachedLocation(code)?.name ?? null,
+      deviceType: cachedLocation(code)?.deviceType ?? null,
+    },
     machines: machines.map(({ machine }) => machine),
     fetchedAt: row.polled_at,
     stale: true,
@@ -70,10 +74,10 @@ const handleStatus = async (url: URL, env: Env): Promise<Response> => {
   // fragment by case and upstream always sees a consistent srcode.
   const code = raw.toLowerCase();
   try {
-    const { uln, name } = await resolveLocation(code);
+    const { uln, name, deviceType } = await resolveLocation(code);
     const { machines } = await fetchMachines(uln);
     const body: StatusResponse = {
-      location: { code, name },
+      location: { code, name, deviceType },
       machines: machines.map(({ machine }) => machine),
       fetchedAt: new Date().toISOString(),
     };
