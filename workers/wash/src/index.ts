@@ -62,10 +62,13 @@ const statusFromLastPoll = async (
 // Same response shape and caching behavior as the Vercel route this
 // replaces (pages/api/wash/status.ts); /wash/api/status rewrites here.
 const handleStatus = async (url: URL, env: Env): Promise<Response> => {
-  const code = url.searchParams.get("code") ?? DEFAULT_CODE;
-  if (!SITE_CODE_PATTERN.test(code)) {
+  const raw = url.searchParams.get("code") ?? DEFAULT_CODE;
+  if (!SITE_CODE_PATTERN.test(raw)) {
     return json({ error: "invalid site code" }, 400, "no-store");
   }
+  // Codes are case-insensitive; normalize so the location cache doesn't
+  // fragment by case and upstream always sees a consistent srcode.
+  const code = raw.toLowerCase();
   try {
     const { uln, name } = await resolveLocation(code);
     const { machines } = await fetchMachines(uln);

@@ -118,7 +118,9 @@ const loadStoredCode = (): string => {
   try {
     const stored = window.localStorage.getItem(CODE_STORAGE_KEY);
     if (stored && CODE_PATTERN.test(stored)) {
-      return stored;
+      // Codes are case-insensitive; normalize so comparisons (e.g. against
+      // DEFAULT_CODE for the heatmap) hold regardless of how it was typed.
+      return stored.toLowerCase();
     }
   } catch {
     // Storage unavailable (private mode, blocked) — fall through.
@@ -355,7 +357,9 @@ const Wash = () => {
 
   const submitCode = (event: FormEvent) => {
     event.preventDefault();
-    const next = draft.trim();
+    // Codes are case-insensitive; normalize so comparisons (e.g. against
+    // DEFAULT_CODE for the heatmap) hold regardless of how it was typed.
+    const next = draft.trim().toLowerCase();
     if (!CODE_PATTERN.test(next)) {
       setDraftError("letters and numbers only");
       return;
