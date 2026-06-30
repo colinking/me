@@ -121,6 +121,18 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
       >
         <div />
         {HOURS.map((hour) => (
+          <div key={`now-${hour}`} className="relative h-6">
+            {now?.hour === hour && (
+              <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 flex-col items-center font-bold leading-none text-[#1a7f37]">
+                <span className="text-[11px]">now</span>
+                <span className="text-[11px]">&darr;</span>
+              </div>
+            )}
+          </div>
+        ))}
+
+        <div />
+        {HOURS.map((hour) => (
           <div
             key={`label-${hour}`}
             className="relative h-4 text-[11px] text-[#999]"
@@ -133,7 +145,11 @@ export const UsageHeatmap = ({ data }: { data: HeatmapResponse }) => {
 
         {DAYS.map((dayLabel, day) => (
           <Fragment key={dayLabel}>
-            <div className="flex items-center pr-2 text-[12px] text-[#999]">
+            <div
+              className={`flex items-center pr-2 text-[12px] ${
+                now?.dow === day ? "font-bold text-[#1a7f37]" : "text-[#999]"
+              }`}
+            >
               {dayLabel}
             </div>
             {HOURS.map((hour) => {
