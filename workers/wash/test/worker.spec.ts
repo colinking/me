@@ -5,6 +5,7 @@ import {
   waitOnExecutionContext,
 } from "cloudflare:test";
 import { beforeAll, describe, expect, it, vi } from "vitest";
+import { ensureAggregates } from "../src/aggregates";
 import { bucketFor, heatmap } from "../src/heatmap";
 import { samplePoll } from "../src/sample";
 import worker from "../src/index";
@@ -331,6 +332,119 @@ describe("heatmap", () => {
       expect.objectContaining({ dow: 6, hour: 19, busy: 20, total: 60, hours: 1 }),
       expect.objectContaining({ dow: 6, hour: 20, busy: 20, total: 60, hours: 1 }),
     ]);
+  });
+});
+
+describe("aggregates", () => {
+  const runningDryer = (startMinutesAgo: number, remaining: number) => ({
+    machine_number: "002",
+    bt_name: "D002",
+    type: "dryer",
+    status: "in_use",
+    start_time: minutesAgo(startMinutesAgo),
+    time_remaining: remaining,
+  });
+
+  it("counts only the extension when a cycle's estimate grows", async () => {
+    // 03:25Z start, 10 min: busy 10 in Sun 8pm PDT.
+    mockMachines([runningDryer(5, 10)]);
+    await samplePoll(env, "test");
+    // Same cycle now estimated to 03:45Z: +10 min, still one machine-hour.
+    vi.setSystemTime(new Date("2026-06-08T03:40:00Z"));
+    mockMachines([runningDryer(5, 20)]);
+    await samplePoll(env, "test");
+    // A shorter estimate later never takes busy time back.
+    vi.setSystemTime(new Date("2026-06-08T03:50:00Z"));
+    mockMachines([runningDryer(5, 15)]);
+    await samplePoll(env, "test");
+    vi.setSystemTime(NOW);
+
+    const result = await heatmap(env);
+    expect(result.polls).toBe(3);
+    expect(result.buckets).toEqual([
+      expect.objectContaining({ dow: 6, hour: 20, busy: 20, total: 60, hours: 1 }),
+    ]);
+    const cycles = await env.WASH_DB.prepare("SELECT * FROM cycles").all();
+    expect(cycles.results).toEqual([
+      { machine_number: "002", start_time: minutesAgo(5), ends_at: minutesAgo(-15) },
+    ]);
+  });
+
+  it("rebuilds from history to the same result as incremental sampling", async () => {
+    mockMachines([washerAvailable, runningDryer(50, 40), dryerBroken]);
+    vi.setSystemTime(new Date("2026-06-08T02:45:00Z"));
+    await samplePoll(env, "test");
+    vi.setSystemTime(NOW);
+    mockMachines([washerAvailable, runningDryer(50, 40), dryerBroken]);
+    await samplePoll(env, "test");
+    const incremental = await heatmap(env);
+    expect(incremental.buckets).toHaveLength(2);
+
+    // Corrupt the aggregates and clear the built flag: the next sampler
+    // run must rebuild everything from polls/usage.
+    await env.WASH_DB.batch([
+      env.WASH_DB.prepare("UPDATE buckets SET busy_ms = 0, observed_min = 1, hours = 9"),
+      env.WASH_DB.prepare("DELETE FROM cycles"),
+      env.WASH_DB.prepare("UPDATE stats SET built = 0, ok_polls = 99"),
+    ]);
+    expect(await ensureAggregates(env)).toBe(true);
+    expect(await ensureAggregates(env)).toBe(false);
+
+    const rebuilt = await heatmap(env);
+    expect(rebuilt.buckets).toEqual(incremental.buckets);
+    expect(rebuilt.polls).toBe(incremental.polls);
+    expect(rebuilt.since).toBe(incremental.since);
+  });
+
+  it("retries a failed rebuild at most every six hours", async () => {
+    mockMachines([washerAvailable]);
+    await samplePoll(env, "test");
+    const attemptedAgo = (hours: number) =>
+      new Date(NOW.getTime() - hours * 3600_000).toISOString();
+
+    // Stale aggregates with a recent attempt: leave them alone for now.
+    await env.WASH_DB.prepare(
+      "UPDATE stats SET built = 0, rebuild_attempted_at = ?1",
+    )
+      .bind(attemptedAgo(1))
+      .run();
+    expect(await ensureAggregates(env)).toBe(false);
+
+    // Once the backoff has passed the rebuild runs and releases the lease.
+    await env.WASH_DB.prepare("UPDATE stats SET rebuild_attempted_at = ?1")
+      .bind(attemptedAgo(7))
+      .run();
+    expect(await ensureAggregates(env)).toBe(true);
+    expect(await ensureAggregates(env)).toBe(false);
+    const stats = await env.WASH_DB.prepare("SELECT * FROM stats").first();
+    expect(stats).toMatchObject({ ok_polls: 1, built: 1, rebuild_attempted_at: null });
+  });
+
+  it("records a poll that reports no machines", async () => {
+    // `connect` sites return an empty data object (docs/WASH_CONNECT_API.md).
+    mockMachines([]);
+    const outcome = await samplePoll(env, "test");
+    expect(outcome).toMatchObject({ kind: "sampled", machines: 0 });
+
+    const result = await heatmap(env);
+    expect(result.polls).toBe(1);
+    expect(result.since).toBe(NOW.toISOString());
+    expect(result.buckets).toEqual([]);
+  });
+
+  it("serves /heatmap without touching the raw history tables", async () => {
+    mockMachines([washerAvailable, dryerRunning()]);
+    await samplePoll(env, "test");
+    const before = await heatmap(env);
+
+    // If /heatmap scanned history, this would make it throw.
+    await env.WASH_DB.batch([
+      env.WASH_DB.prepare("DROP TABLE usage"),
+      env.WASH_DB.prepare("DROP TABLE polls"),
+    ]);
+    const after = await heatmap(env);
+    expect(after.buckets).toEqual(before.buckets);
+    expect(after.polls).toBe(1);
   });
 });
 

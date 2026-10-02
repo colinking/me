@@ -38,7 +38,7 @@ SELECT date(polled_at) day, COUNT(*) polls, SUM(1-ok) failures
 FROM polls GROUP BY day ORDER BY day DESC LIMIT 14;
 ```
 
-**Interpreting errors — two distinct failure classes:**
+**Interpreting errors — three distinct failure classes:**
 - **WASH upstream failure** (fetch/parse errors from `src/wash.ts`) → the
   laundry API is actually down or changed shape. `upstream_ms` reflects real
   fetch latency. `/status` falls back to the last good poll (<1h old).
@@ -47,9 +47,34 @@ FROM polls GROUP BY day ORDER BY day DESC LIMIT 14;
   D1 timeout, not the fetch). These are isolated and self-heal on the next 10-min
   cron (failed polls don't count toward self-throttling, so the next trigger
   retries). No action needed unless they cluster.
+- **`D1_ERROR: ... exceeded D1's free tier daily row read limit`** → the
+  account's daily read budget is gone (see below). Cron runs throw before
+  writing anything, so this leaves a *gap* in `polls` rather than failed rows.
 
 Because failed-poll `upstream_ms` is inflated by the D1 timeout, always scope
 latency stats to `ok=1` (as the health query above does).
+
+**D1 row-read budget (Workers Free: 5M rows read/day):** D1 counts rows
+*scanned*, and `polls`/`usage` grow by ~150 and ~450 rows a day. `/heatmap`
+must only read the aggregate tables (`buckets`, `stats`); the cron only
+probes `machine_hours`/`observed_hours`/`cycles` by primary key. A regression
+looks like `wrangler d1 insights wash --timePeriod 7d --sort-by reads` showing
+a query with avgRowsRead in the tens of thousands, and eventually
+`D1_ERROR: ... exceeded D1's free tier daily row read limit` (reset at
+midnight UTC; nothing is recorded while locked out). `wrangler d1 info wash`
+shows `rows_read_24h`. Note that Vercel does **not** cache the `/wash/api/*`
+rewrites (`x-vercel-cache: MISS`), so every page poll reaches the worker.
+
+**Aggregate health / rebuild:**
+```sql
+SELECT * FROM stats;                          -- ok_polls should track SUM(ok) in polls
+SELECT COUNT(*) buckets, SUM(observed_min) FROM buckets;
+```
+If the aggregates ever look wrong, `UPDATE stats SET built = 0;` — the next
+cron rebuilds every derived table from `polls`/`usage` (~200k row reads,
+once) and logs `aggregates rebuilt`. A rebuild that throws logs
+`aggregate rebuild failed: ...`, never blocks sampling, and is retried at
+most every 6 hours (`stats.rebuild_attempted_at` is the lease).
 
 **Worker console logs / invocation metrics** (observability is enabled in
 `wrangler.jsonc`): each cron logs `sample {...outcome}`. Available in the

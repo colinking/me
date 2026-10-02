@@ -4,6 +4,7 @@
 //
 //   node scripts/generate-seed.mjs > .wrangler/seed.sql
 //   npx wrangler d1 execute wash --local --file .wrangler/seed.sql
+//   curl "localhost:8787/__scheduled?cron=*/10+*+*+*+*"   # rebuilds aggregates
 //
 // Simulates the sampler faithfully: a poll every 10 minutes for 8 weeks,
 // machines starting cycles at rates tuned to a residential pattern
@@ -53,7 +54,17 @@ const utilization = (dow, hour) => {
   return Math.min(Math.max(p, 0.01), 0.95);
 };
 
-const lines = ["DELETE FROM usage;", "DELETE FROM polls;"];
+// The heatmap aggregates are derived from these tables; clearing `stats`
+// makes the next sampler run rebuild them from the seed.
+const lines = [
+  "DELETE FROM stats;",
+  "DELETE FROM buckets;",
+  "DELETE FROM machine_hours;",
+  "DELETE FROM observed_hours;",
+  "DELETE FROM cycles;",
+  "DELETE FROM usage;",
+  "DELETE FROM polls;",
+];
 const usageRows = [];
 const pollRows = [];
 
