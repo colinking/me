@@ -1,155 +1,99 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Medium Length Professional CV - RESUME CLASS FILE
+% Single-page resume class
 %
-% This template has been downloaded from:
-% http://www.LaTeXTemplates.com
+% Build with: tectonic resume/resume.tex --outdir ./public
 %
-% This class file defines the structure and design of the template. 
-%
-% Original header:
-% Copyright (C) 2010 by Trey Hunner
-%
-% Copying and distribution of this file, with or without modification,
-% are permitted in any medium without royalty provided the copyright
-% notice and this notice are preserved. This file is offered as-is,
-% without any warranty.
-%
-% Created by Trey Hunner and modified by www.LaTeXTemplates.com
-%
+% Layout knobs are grouped at the top of this file. If the resume spills onto a
+% second page, tighten \bulletsep / \rolesep / \sectionsep before touching the
+% font size or margins.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\ProvidesClass{resume}[2010/07/10 v0.9 Resume class]
+\ProvidesClass{resume}[2026/10/11 Single-page resume]
 
-\LoadClass[10pt,letterpaper]{article} % Font size and paper type
-
-\usepackage[parfill]{parskip} % Remove paragraph indentation
-\usepackage{array} % Required for boldface (\bf and \bfseries) tabular columns
-\usepackage{ifthen} % Required for ifthenelse statements
-
-\pagestyle{empty} % Suppress page numbers
+\LoadClass[10pt,letterpaper]{article}
 
 %----------------------------------------------------------------------------------------
-%	HEADINGS COMMANDS: Commands for printing name and address
+%	LAYOUT KNOBS
 %----------------------------------------------------------------------------------------
 
-\def \name#1{\def\@name{#1}} % Defines the \name command to set name
-\def \@name {} % Sets \@name to empty by default
+\RequirePackage[letterpaper,left=0.55in,right=0.55in,top=0.45in,bottom=0.4in]{geometry}
 
-\def \addressSep {$\cdot$} % Set default address separator to a diamond
+\newlength{\sectionsep} \setlength{\sectionsep}{9pt}   % Space above each section heading
+\newlength{\rolesep}    \setlength{\rolesep}{7pt}      % Space above each role
+\newlength{\bulletsep}  \setlength{\bulletsep}{1.5pt}  % Space between bullets
 
-% One, two or three address lines can be specified 
-\let \@addressone \relax
-\let \@addresstwo \relax
-\let \@addressthree \relax
+%----------------------------------------------------------------------------------------
+%	PACKAGES
+%----------------------------------------------------------------------------------------
 
-% \address command can be used to set the first, second, and third address (last 2 optional)
-\def \address #1{
-  \@ifundefined{@addresstwo}{
-    \def \@addresstwo {#1}
-  }{
-  \@ifundefined{@addressthree}{
-  \def \@addressthree {#1}
-  }{
-     \def \@addressone {#1}
-  }}
-}
+% XCharter is compact and, unlike some of the sans options in the TeX bundle, keeps
+% word spaces and plain hyphens when resume parsers extract text from the PDF.
+\RequirePackage{fontspec}
+\setmainfont{XCharter}[
+  Extension=.otf,
+  UprightFont=*-Roman,
+  BoldFont=*-Bold,
+  ItalicFont=*-Italic,
+  BoldItalicFont=*-BoldItalic,
+  Numbers={Lining,Proportional},
+]
+\RequirePackage{enumitem}
+\RequirePackage[hidelinks]{hyperref}
 
-% \printaddress is used to style an address line (given as input)
-\def \printaddress #1{
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{1.04}
+\emergencystretch=2em
+\hyphenpenalty=10000 % Never hyphenate; a resume reads better with whole words
+\exhyphenpenalty=2000 % Discourage breaking at explicit hyphens (e.g. "run-time")
+\urlstyle{same}
+\frenchspacing % Single space after periods
+
+%----------------------------------------------------------------------------------------
+%	HEADER
+%----------------------------------------------------------------------------------------
+
+% \resumeheader{name}{contact line}
+\newcommand{\resumeheader}[2]{%
   \begingroup
-    \def \\ {\addressSep\ }
-    \centerline{#1}
-  \endgroup
-  \par
-  %\addressskip
-}
-
-% \printname is used to print the name as a page header
-\def \printname {
-  \begingroup
-    \hfil{\MakeUppercase{\namesize\bf \@name}}\hfil
-    \nameskip\break
+    \centering
+    {\fontsize{23}{26}\selectfont\bfseries #1\par}%
+    \vspace{4pt}%
+    {\small #2\par}%
   \endgroup
 }
 
+% Separator between items on the contact line
+\newcommand{\sep}{\hspace{0.6em}\textperiodcentered\hspace{0.6em}}
+
 %----------------------------------------------------------------------------------------
-%	PRINT THE HEADING LINES
+%	SECTIONS
 %----------------------------------------------------------------------------------------
 
-\let\ori@document=\document
-\renewcommand{\document}{
-  \ori@document  % Begin document
-  \printname % Print the name specified with \name
-  \@ifundefined{@addressone}{}{ % Print the first address if specified
-    \printaddress{\@addressone}}
-  \@ifundefined{@addresstwo}{}{ % Print the second address if specified
-    \printaddress{\@addresstwo}}
-     \@ifundefined{@addressthree}{}{ % Print the third address if specified
-    \printaddress{\@addressthree}}
+% \resumesection{title}
+\newcommand{\resumesection}[1]{%
+  \par\vspace{\sectionsep}%
+  {\small\bfseries\addfontfeature{LetterSpace=7.0}\MakeUppercase{#1}\par}%
+  \vspace{2pt}\hrule height 0.5pt\vspace{1pt}%
 }
 
 %----------------------------------------------------------------------------------------
-%	SECTION FORMATTING
+%	ROLES
 %----------------------------------------------------------------------------------------
 
-% Defines the rSection environment for the large sections within the CV
-\newenvironment{rSection}[1]{ % 1 input argument - section name
-  \sectionskip
-  \MakeUppercase{\bf #1} % Section title
-  \sectionlineskip
-  \hrule % Horizontal line
-  \begin{list}{}{ % List for each individual item in the section
-    \setlength{\leftmargin}{1.0em} % Margin within the section
-  }
-  \item[]
-}{
-  \end{list}
+% \begin{role}{company}{title}{dates} \item ... \end{role}
+\newenvironment{role}[3]{%
+  \par\vspace{\rolesep}%
+  {\bfseries #1}\hspace{0.7em}{\itshape #2}\hfill{#3}\par
+  \begin{itemize}[leftmargin=1.05em,labelsep=0.45em,itemsep=\bulletsep,topsep=2.5pt,parsep=0pt,partopsep=0pt,label={\raisebox{0.15ex}{\footnotesize\textbullet}}]
+}{%
+  \end{itemize}
 }
 
-%----------------------------------------------------------------------------------------
-%	HONORS AND AWARDS FORMATTING
-%----------------------------------------------------------------------------------------
+% Bold lead-in for a bullet that opens a new area of work within a role
+\newcommand{\lead}[1]{\textbf{#1.}}
 
-\newenvironment{rHonorsSection}[1]{ % 1 input argument - section name
-  \sectionskip
-  \MakeUppercase{\bf #1} % Section title
-  \sectionlineskip
-  \hrule % Horizontal line
-  \begin{list}{$\cdot$}{\leftmargin=1.0em} % \cdot used for bullets, no indentation
-   \itemsep -0.5em % Compress items in list together for aesthetics
-  }{
-  \end{list}
-}
-
-
-%----------------------------------------------------------------------------------------
-%	WORK EXPERIENCE FORMATTING
-%----------------------------------------------------------------------------------------
-
-\newenvironment{rSubsection}[4]{ % 4 input arguments - company name, year(s) employed, job title and location
- {\bf #1} \hfill {#2}% Bold company name and date on the right
- \ifthenelse{\equal{#3}{}}{}{ % If the third argument is not specified, don't print the job title and location line
-  \\
-  {\em #3} \hfill {\em #4} % Italic job title and location
-  }
-  \begin{list}{$\cdot$}{\leftmargin=0em} % \cdot used for bullets, no indentation
-   \itemsep -0.5em \vspace{-0.5em} % Compress items in list together for aesthetics
-  }{
-  \end{list}
-  \vspace{0.2em} % Some space after the list of bullet points
-}
-\newenvironment{rSubsectionEmpty}[4]{ % 4 input arguments - company name, year(s) employed, job title and location
- {\bf #1} \hfill {#2}% Bold company name and date on the right
- \ifthenelse{\equal{#3}{}}{}{ % If the third argument is not specified, don't print the job title and location line
-  \\
-  {\em #3} \hfill {\em #4} % Italic job title and location
-  }
-  \vspace{0.2em} % Some space after the list of bullet points
-}
-
-% The below commands define the whitespace after certain things in the document - they can be \smallskip, \medskip or \bigskip
-\def\namesize{\huge} % Size of the name at the top of the document
-\def\addressskip{\smallskip} % The space between the two address (or phone/email) lines
-\def\sectionlineskip{\smallskip} % The space above the horizontal line for each section 
-\def\nameskip{\smallskip} % The space after your name at the top
-\def\sectionskip{\smallskip} % The space after the heading section
+% \entry{label}{text}: a hanging one-liner for sections without bullets (education, skills)
+\newcommand{\entry}[2]{\par\vspace{3.5pt}\textbf{#1}\hspace{0.7em}#2\par}
+\newcommand{\subentry}[1]{\par\vspace{1.5pt}#1\par}
