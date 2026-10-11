@@ -28,22 +28,10 @@
 \usepackage[left=0.7in,top=0.3in,right=0.7in,bottom=0.3in]{geometry} % Document margins
 
 \name{Colin King} % Your name
-\address{\href{https://colinking.co}{colinking.co} \\ \href{mailto:me@colinking.co}{me@colinking.co}}
-\address{\href{https://github.com/colinking}{github.com/colinking} \\ \href{https://linkedin.com/in/colinking1}{linkedin.com/in/colinking1}}
+\address{San Francisco, CA \\ \href{mailto:me@colinking.co}{me@colinking.co}}
+\address{\href{https://colinking.co}{colinking.co} \\ \href{https://github.com/colinking}{github.com/colinking} \\ \href{https://linkedin.com/in/colinking1}{linkedin.com/in/colinking1}}
 
 \begin{document}
-
-%----------------------------------------------------------------------------------------
-%	EDUCATION SECTION
-%----------------------------------------------------------------------------------------
-
-\begin{rSection}{Education}
-
-{\bf University of Maryland, Cybersecurity Honors College} \hfill {} \\ 
-{B.S. in Computer Science, Statistics Minor -- GPA: 3.98 (magna cum laude)} \hfill {August 2014 - May 2017} \\
-{M.S. in Computer Science -- GPA: 4.0} \hfill {August 2017 - May 2018}
-
-\end{rSection}
 
 %----------------------------------------------------------------------------------------
 %	WORK EXPERIENCE SECTION
@@ -51,35 +39,54 @@
 
 \begin{rSection}{Experience}
 
+% TODO: drop locations and move title inline with date so we can get extra lines
+% TODO: WIP very rough, needs work
 \begin{rSubsection}{Rippling}{February 2024 - April 2026}{Staff Software Engineer}{San Francisco, CA}
-\item Search team
-\item Events Platform
+\item Designed and implemented a new Search architecture to reduce average query times from 3s to 100ms and expand from 2 searchable data types to over a dozen.
+\item Served as the Tech Lead for the Search team, expanding it from just myself to a team of 6 high-performing engineers.
+\item Collaborated with product and design to implement a high-quality UI for Search. Pushed for improvements in UX and UI. Set expectations with stakeholders and drove technical decision making.
+\item Architected a generic authz system to support pushing permission logic for Google Drive, Atlassian, and Slack permissions into OpenSearch.
+\item Onboarded and mentored over a dozen engineers.
+\item Served as the OpenSearch expert at Rippling and was consulted by teams who were adopting it.
+
 \item Data Bridge
+\item Events Platform
 \end{rSubsection}
 
-\begin{rSubsection}{Airplane.dev}{January 2021 - January 2024}{Software Engineer}{San Francisco, CA}
-\item TODO
+% TODO: confirm employee count and mentor count
+\begin{rSubsection}{Airplane.dev}{January 2021 - January 2024}{Founding Engineer}{San Francisco, CA}
+\item First hire; helped grow the team from 1 to 22 employees before it was acquired by Airtable.
+\item Led product and engineering for Runbooks, a multi-step operations builder: ran customer research, designed the UX, built the beta solo, and led two engineers to GA in 6 months.
+\item Proposed and drove the company's pivot from no-code Runbooks to code-first Workflows.
+\item Architected a Temporal-backed durable execution runtime that let developers write long-running, multi-step workflows as plain TypeScript.
+\item Built much of the core Tasks platform: the build system (deploy code without a Dockerfile), Docker registry, parameter schema, environments, local development, API idempotency, V8-based JS templating language, and the first Python SDK.
+\item Set up foundational infrastructure and practices: e,g. migrated to infra-as-code with Pulumi, ran incident reviews, and mentored 6 engineers.
 \end{rSubsection}
 
 \begin{rSubsection}{Segment}{July 2018 - January 2021}{Senior Software Engineer}{San Francisco, CA}
-\item TODO
+\item Helped launch Protocols: data quality product
+\item Primary author of Typewriter, the open-source code-generator for type-safe analytics clients.
+\item Prototyped a ClickHouse-based counters system for Protocols that replaced the legacy Redis-based system, improving the reliability, granularity, and performance.
+\item Led full-stack development to support deploying Segment in customer VPCs.
+\item Developed a general-purpose ClickHouse-based system for counter-based systems that could be deployed to customer VPCs.
+\item Replays?
 \end{rSubsection}
 
-\begin{rSubsection}{Nextdoor, KPCB Engineering Fellowship}{May 2017 - August 2017}{Software Engineering Intern}{San Francisco, CA}
-\item Proposed new search infrastructure to reduce overhead, improve search quality, and support internationalization.
-\item Designed, tested, and deployed a generalized DynamoDB replication service on Docker, ECS, Kingpin.
-\item Automated NPS survey system \& released ETL support for SurveyMonkey with Airflow, Hive, Redis, PostgreSQL.
+% \begin{rSubsection}{Nextdoor, KPCB Engineering Fellowship}{May 2017 - August 2017}{Software Engineering Intern}{San Francisco, CA}
+% \item Proposed new search infrastructure to reduce overhead, improve search quality, and support internationalization.
+% \item Designed, tested, and deployed a generalized DynamoDB replication service on Docker, ECS, Kingpin.
+% \item Automated NPS survey system \& released ETL support for SurveyMonkey with Airflow, Hive, Redis, PostgreSQL.
+% \end{rSubsection}
+
+\begin{rSubsection}{University of Maryland}{August 2017 - May 2018}{Founder, Student Instructor}{College Park, MD}
+\item Founded and taught 2 semesters of CMSC389L, a for-credit class on practical cloud computing with AWS.
 \end{rSubsection}
 
-\begin{rSubsection}{Contrary Capital}{April 2017 - Present}{Venture Partner, Engineering Lead}{College Park, MD}
+\begin{rSubsection}{Contrary Capital}{April 2017 - May 2018}{Venture Partner, Engineering Lead}{College Park, MD}
 \item Founded and lead the UMD pod of Contrary Capital, a decentralized pre-seed stage venture capital fund.
 \item Responsible for sourcing deals, performing due diligence, building a campus-wide network, hosting talks and events.
 \item Directed a 5-person team to rebrand Contrary (and contrarycap.com) for our nationwide launch in September 2017.
 \item Founded, hired, and lead the 3-person Contrary engineering team on various projects, including our talent platform.
-\end{rSubsection}
-
-\begin{rSubsection}{University of Maryland}{August 2017 - Present}{Founder, Student Instructor}{College Park, MD}
-\item Designed and taught 2 semesters of CMSC389L, a new for-credit class on practical cloud computing with AWS.
 \end{rSubsection}
 
 % \begin{rSubsection}{University of Maryland}{August 2017 - Present}{Student Researcher}{College Park, MD}
@@ -88,9 +95,9 @@
 
 \begin{rSubsection}{Google}{May 2016 - August 2016}{Software Engineering Intern}{San Francisco, CA \normalfont{\&} \em{Mountain View, CA}}
 \item Singlehandedly architected a scalable system to verifiably delete and recover indexed search data on Google Cloud.
-\item Authored a 10+ page design document that explains architectural decisions; Feature currently available in alpha.
+% \item Authored a 10+ page design document that explains architectural decisions; Feature currently available in alpha.
 % \item Built a system to verify deletion progress to satisfy Google Cloud SLA requirements.
-\item Orchestrated data removal across multiple zones, replicas, and database systems w/ different consistency guarantees.
+% \item Orchestrated data removal across multiple zones, replicas, and database systems w/ different consistency guarantees.
 % \item Established consistency guarantees while working mostly with an eventually consistent database system.
 % \item Extended the Python and Java App Engine APIs and development environments to support index deletion/recovery.
 \end{rSubsection}
@@ -101,11 +108,11 @@
 % \item Designed a bucketed search library using the DICE algorithm that is used on multiple Gallup sites.
 %\end{rSubsection}
 
-\begin{rSubsection}{Project Delta}{February 2015 - December 2016}{Co-Founder and Project Manager}{College Park, MD}
-\item Partnered with 5 non-profits/NGOs to source meaningful problems in international development.
-\item Recruited 10 student engineers and designers to develop software solutions for non-profit clients.
-\item Led a team of three engineers to ship a volunteer-leave scheduling software to the U.S. Peace Corps in Botswana.
-\end{rSubsection}
+% \begin{rSubsection}{Project Delta}{February 2015 - December 2016}{Co-Founder and Project Manager}{College Park, MD}
+% \item Partnered with 5 non-profits/NGOs to source meaningful problems in international development.
+% \item Recruited 10 student engineers and designers to develop software solutions for non-profit clients.
+% \item Led a team of three engineers to ship a volunteer-leave scheduling software to the U.S. Peace Corps in Botswana.
+% \end{rSubsection}
 
 %------------------------------------------------
 
@@ -116,25 +123,37 @@
 \end{rSection}
 
 %----------------------------------------------------------------------------------------
+%	EDUCATION SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{rSection}{Education}
+
+% TODO: Maybe move ACES cybersecurity honors stuff elsewhere?
+{\bf University of Maryland \& Cybersecurity Honors College} \hfill {} \\ 
+{B.S. in Computer Science, Statistics Minor -- GPA: 3.98 (magna cum laude)} \hfill {August 2014 - May 2017} \\
+% {M.S. in Computer Science -- dropped out} \hfill {August 2017 - May 2018}
+\end{rSection}
+
+%----------------------------------------------------------------------------------------
 %	HONORS AND AWARDS SECTION
 %----------------------------------------------------------------------------------------
 
 \begin{rHonorsSection}{Honors and Awards}
-\item KPCB Engineering Fellow (Summer 2017)
-% \item 13 hackathon awards, including four top 3 finishes at UMich (MHacks), UPenn (HackTheChange), UC (RevolutionUC), and UMD (Daemon Dash)
-% \item 2nd Place at MHacks VI; 1st Place at HackTheChange; 1st Place at Damon Dash; 3rd Place at RevolutionUC
-\item President's Scholarship; a four year merit-based scholarship
+% \item 13 hackathon awards, including multiple top 3 finishes at UMich (MHacks), UPenn (HackTheChange), UC (RevolutionUC), and UMD (Daemon Dash)
+\item KPCB Engineering Fellow (Summer 2017, Nextdoor)
+\item Won more than a dozen hackathon awards including: 2nd Place at MHacks VI; 1st Place at HackTheChange; 1st Place at Damon Dash; 3rd Place at RevolutionUC
+% \item President's Scholarship; a four year merit-based scholarship
 % \item Cybersecurity Honors College (ACES)
 % \item Academic Excellence Award for Computer Science
 % \item John D. Gannon Merit Scholarship
 % \item Gannon Portal Scholarship for Outstanding Young Computer Science Students
 %\setlength\itemsep{0em}
 % \item ODK Leadership Honor Society Member
-\item 2nd Place (of 276) \& Best Use of Twilio \& Best .CO Hack at MHacks VI
+% \item 2nd Place (of 276) \& Best Use of Twilio \& Best .CO Hack at MHacks VI
 %\setlength\itemsep{-0.4em}
-\item 1st Place at University of Pennsylvania's social impact hackathon, HackTheChange
-\item 3rd Place \& KPCB Build for Good Challenge winner at RevolutionUC
-\item 1st Place (of 29) at UMD's Daemon Dash
+% \item 1st Place at University of Pennsylvania's social impact hackathon, HackTheChange
+% \item 3rd Place \& KPCB Build for Good Challenge winner at RevolutionUC
+% \item 1st Place (of 29) at UMD's Daemon Dash
 % \item Best Use of AWS at MLH's HackThePlanet
 % \item Best Use of IBM Bluemix at PennApps XII
 % \item Best Use of MongoDB \& Best Sustainable App at HackRU
@@ -142,7 +161,7 @@
 % \item 8-Breaker Prize ("Most Unique Hack") at HackNY
 
 %\setlength\itemsep{0em}
-\item 2nd Place at the Maryland Cyber Challenge cybersecurity competition, MCC
+% \item 2nd Place at the Maryland Cyber Challenge cybersecurity competition, MCC
 %\item Fastest Solver of Problem 3 at the 2013 University of Maryland Java Programming Competition
 
 \end{rHonorsSection}
@@ -179,14 +198,14 @@
 %	TECHNICAL STRENGTHS SECTION
 %----------------------------------------------------------------------------------------
 
-\begin{rSection}{Skills and Activities}
+% \begin{rSection}{Skills and Activities}
 
-\begin{tabular}{ @{} >{\bfseries}l @{\hspace{6ex}} l }
-Skills & AWS, Security, Unix, Statistics, Python, Javascript, Java, Go, C, React, MongoDB \\
-Activities & Hackathon Organizer (Bitcamp 2015 \& 2016), Startup Shell Member \\
- & ACES Cybersecurity Competition Team, Terrapin Hackers, Terrapin Runners
-\end{tabular}
+% \begin{tabular}{ @{} >{\bfseries}l @{\hspace{6ex}} l }
+% Skills & AWS, Security, Unix, Statistics, Python, Javascript, Java, Go, C, React, MongoDB \\
+% Activities & Hackathon Organizer (Bitcamp 2015 \& 2016), Startup Shell Member \\
+%  & ACES Cybersecurity Competition Team, Terrapin Hackers, Terrapin Runners
+% \end{tabular}
 
-\end{rSection}
+% \end{rSection}
 
 \end{document}
