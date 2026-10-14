@@ -43,25 +43,25 @@
 
 \begin{role}{Airplane}{Founding Engineer}{Jan 2021 -- Jan 2024}
 \item First hire at a developer platform for internal tools (acquired by Airtable). Set technical direction across the stack and helped grow the team to 22: interviewed dozens of candidates, referred two senior engineers, and mentored six.
-\item Proposed and led the pivot from no-code Runbooks to code-first Workflows. As tech lead, architected a durable execution runtime on Temporal that lets developers write long-running, multi-step workflows as plain TypeScript.
+\item Led product and engineering for Runbooks, a multi-step operations builder with an embedded V8 templating runtime: ran customer research, designed the UX, built the beta solo, and led two engineers to GA in six months.
+\item Proposed and led the pivot from no-code Runbooks to code-first Workflows. As tech lead, architected a durable execution runtime on Temporal that let developers write long-running, multi-step workflows as plain TypeScript.
 \item Built much of the core Tasks platform: a build system that deploys code without a Dockerfile, the Docker registry, parameter schemas, environments, local development, and the first Python SDK.
-\item Hardened the foundations: idempotent APIs with safe retries across the Go, Python, and JS clients, Postgres tuning on the scheduling path, an embedded V8 templating runtime, and infrastructure-as-code with Pulumi.
-\item Led product and engineering for Runbooks, a multi-step operations builder: ran customer research, designed the UX, built the beta solo, and led two engineers to GA in six months.
+\item Supported teams across the company: ran incident reviews and drove follow-ups to completion, resolved dozens of customer issues, and reviewed 1,700+ PRs and dozens of design docs.
 % Bench:
-% \item Ran incident reviews and drove follow-ups to completion.
 % \item Upstreamed fixes to v8go (panics, Apple Silicon support) and Headless UI.
 % \item Merged the three main Go repos into a monorepo and standardized the API clients to fix retry and error-handling bugs.
 % \item Shipped entity editing in Studio, the local development environment.
-% \item Diagnosed and resolved dozens of customer issues, e.g. self-hosted agents running out of disk and ESM dependencies breaking Node builds.
 \end{role}
 
 \begin{role}{Segment}{Senior Software Engineer}{Jul 2018 -- Jan 2021}
-\item Built much of the control plane for Hybrid Segment, which runs single-tenant pipelines in customer VPCs on Kubernetes: per-customer config replication on ctlstore (25x faster SQLite builds), provisioning APIs, and PrivateLink-based alerting.
-\item Designed and shipped Segment's tiered rollout system (feature gates and audit logs on ctlstore) after aligning a dozen stakeholders across engineering, product, and success. It gated launches such as CloudEvents and Demux.
-\item Root-caused duplicate deliveries in the RocksDB-backed dedupe pipeline, a system the org no longer had experts in: a broken metric had hidden that it retained only 38 hours of history. Extended the window to five days.
-\item Proposed and built a unified counters system on ClickHouse, proving out ClickHouse in production at Segment. It replaced a Redis-based system and powered Protocols violation counts, incident investigations, and pricing analysis.
-\item Took Typewriter, an open-source generator of type-safe analytics clients, from prototype to production across TypeScript, iOS, and Android. Shipped Protocols features that unblocked several enterprise deals.
+\item Early engineer on an R\&D effort to run Segment as a managed deployment into customer VPCs: shipped per-customer config replication, multi-pipeline support, alerting, custom domains, and prototyped Debugger support with ClickHouse.
+\item Tech lead for Protocols, Segment’s data-quality product: shipped core full-stack features that unblocked several enterprise deals, mentored engineers, drove incident investigations, and stood in for the PM on-site with a major customer.
+\item Led the design of Segment’s feature-flag service for tiered rollouts, from aligning a dozen stakeholders to shipping the worker, API, and UI. This became the de-facto way to roll out software at Segment.
+\item Stood up Segment's first ClickHouse deployment: wrote the design doc and built the ingestion worker and APIs behind Protocols violation counts, then scaled it with a staff engineer. Also used for incident investigations and pricing analysis.
+\item Primary author of Typewriter, an open-source generator of type-safe analytics clients (300k+ monthly npm downloads). Rewrote it around a pluggable generator interface and shared end-to-end tests; others then added Android and Swift.
 % Bench:
+% \item Drove Typewriter to 95\% adoption in Segment's own app, and shipped clients for TypeScript, Node, iOS, and Android across 32 releases.
+% \item Root-caused duplicate deliveries in the RocksDB-backed dedupe pipeline, a system the org no longer had experts in: a broken metric had hidden that it retained only 38 hours of history. Extended the window to five days.
 % \item Co-led a 15-session reading group on Designing Data-Intensive Applications, attended by 30+ people.
 % \item Co-owned Replays, the system for re-sending historical events to new destinations, and migrated it to ClickHouse.
 % \item Took the most critical parts of the staging environment off the public internet during a security week (Warbler Award).
@@ -69,7 +69,7 @@
 % \item Volunteered for a month with U.S. Digital Response to ship an unemployment insurance intake service for New Jersey.
 \end{role}
 
-\entry{Earlier}{Software engineering intern at Google (App Engine search) and Nextdoor (KPCB Engineering Fellow).}
+\entry{Earlier}{Software engineering intern at Google (App Engine search) and Nextdoor (Kleiner Perkins Engineering Fellow).}
 
 %----------------------------------------------------------------------------------------
 %	EDUCATION
@@ -88,6 +88,6 @@
 \resumesection{Skills}
 
 \entry{Languages}{Go, Python, TypeScript}
-\entry{Systems}{Kafka, OpenSearch, Postgres, Kubernetes, AWS, Terraform, Datadog, Iceberg, Temporal, ClickHouse, Flink, Pulumi}
+\entry{Systems}{Kafka, OpenSearch, Postgres, Redis, Kubernetes, AWS, Terraform, Datadog, React, Iceberg, Temporal, ClickHouse}
 
 \end{document}
