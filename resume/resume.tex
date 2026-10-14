@@ -25,19 +25,22 @@
 \resumesection{Experience}
 
 \begin{role}{Rippling}{Staff Software Engineer}{Feb 2024 -- Apr 2026}
-\item \lead{Search} Founding engineer and tech lead. Took Search from a product spec to GA, then to betas of Universal Search (third-party data) and AI Search (semantic and RAG), while growing the team from one engineer to six.
-\item Designed a new search architecture on OpenSearch that cut average query time from 3s to 100ms and grew coverage from 2 searchable data types to more than a dozen.
-\item Moved ingestion onto Kafka and built a general-purpose permission system that enforces Google Drive, Slack, and Atlassian access controls inside OpenSearch.
-\item Became the company's OpenSearch expert: tuned embedding ingestion, query caching, and k-NN memory use, and added shard-size monitoring and document-size attribution to every cluster at Rippling.
-\item \lead{Data Bridge} Embedded for two months to stabilize the internal data-sync platform: shipped readiness tracking for when data lands in each destination, async control events that decouple its components, and schema evolution.
-\item \lead{Events Platform} Built the audit-event pipeline (Kafka, Flink, Iceberg) that ingests millions of events per day. Took over an unmaintained Flink ingestion job that several teams relied on and made it resilient to most schema changes.
-\item Drove reliability and developer experience for the platform: interviewed six client teams to set the reliability roadmap, refactored the Go events client and added its first test suite, and halved CI time for the main Flink repo.
-\item Root-caused production failures across team and vendor boundaries, e.g. traced a service OOM to Datadog's MongoDB tracing library and patched it upstream, and tracked a notifications incident to an HTTP/2 bug in the shared Go stack.
+\item \lead{Events Platform} Tech lead for the Kafka-based event platform used by dozens of product teams, leading four engineers. Co-led a war room to harden it after payroll incidents, then turned the fixes into a reliability scorecard for every team.
+\item Built the pipeline behind the customer-facing Audit Log (Kafka, Flink, Iceberg), ingesting millions of events a day, and led it to GA with 50+ customers. Made the unmaintained Flink job behind it resilient to most schema changes.
+\item Cut the platform's consumer compute cost by more than half, interviewed six client teams to set its reliability roadmap, refactored the Go client and added its first tests, introduced AI code review (Claude, BugBot), and halved Flink CI time.
+\item Root-caused failures across team and vendor boundaries, e.g. traced a service OOM to Datadog's MongoDB tracing library and patched it upstream, and tracked a notifications incident to an HTTP/2 bug in the shared Go stack.
+\item \lead{Data Bridge} Embedded for two months on the internal data-sync platform (Go): shipped tracking for when data lands in each destination, async control events that decouple its services, and schema evolution.
+\item \lead{Search} Founding engineer and tech lead: took Search from spec to GA and grew the team from one engineer to six. Its OpenSearch architecture cut average query time from 3s to 100ms and grew coverage from 2 data types to over a dozen.
+\item Built change-data-capture ingestion on Kafka and a general-purpose permission system that enforces Rippling's access policies, and those of Google Drive, Confluence, and Slack, as OpenSearch query filters.
+\item Search became the retrieval layer for Rippling AI; owned its embedding ingestion and k-NN tuning on a 2 TB vector index. As the company's OpenSearch expert, added shard and storage monitoring to every cluster.
 % Bench:
+% \item Co-led response to a Kafka outage (1.5% of events affected over 45 minutes) and contacted every affected team within 24 hours; handed Kafka operations to a new streaming-infra team.
+% \item Chose to consolidate Kafka topics (multi-event topics) over replacing Kafka, and set the team's roadmap for customer-queryable public events.
+% \item Ran a premortem and wrote the RFC for preventing infinite retries; made on-call a full-time rotation focused on follow-ups.
+% \item Brought event testing to the pre-production cell and to Playwright suites, so teams could test consumers before production.
+% \item Fixed a MongoDB session bug in the ORM that had hit four teams, and flagged it to a fifth a week before it caused their incident.
 % \item Onboarded and mentored more than a dozen engineers across Search and the platform teams.
-% \item Led Search incident response and cost (COGS) investigations.
-% \item Introduced AI code review (Claude, BugBot) and Terraform-managed Spark jobs to the Events Platform team.
-% \item Shipped distributed tracing for the ML service behind Search and used it to remove query bottlenecks.
+% \item Found a 6x speedup in embedding generation and cut Search query latency for executives by removing per-query flag and permission overhead.
 % \item Fixed rare Kafka producer crashes caused by forking after initialization, and consumer latency spikes during deploys (cooperative rebalancing, pod shutdown).
 \end{role}
 
