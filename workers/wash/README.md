@@ -4,12 +4,19 @@ The canonical wash backend, replacing `pages/api/wash/status.ts`:
 
 - `GET /status` — live machine status, same shape and caching as the Vercel
   route it replaced (`/wash/api/status` rewrites here).
-- `GET /heatmap` — P(machine in use) per hour-of-week bucket, per machine
-  type, aggregated from samples.
+- `GET /heatmap` — utilization per hour-of-week bucket, served from the
+  `buckets` aggregate table (<= 168 rows per request, never a history scan).
 - **cron** (`*/10 * * * *`) — polls the WASH backend and records every
   execution in D1: a `polls` row (with the verbatim upstream body in
   `raw_json`) plus one `usage` row per machine. Failures are recorded
-  too. Self-throttles via `MIN_POLL_INTERVAL_SECONDS`.
+  too. Successful polls are also folded into the heatmap aggregates
+  (`src/aggregates.ts`). Self-throttles via `MIN_POLL_INTERVAL_SECONDS`.
+
+`polls`/`usage` are the raw record; `buckets`, `machine_hours`,
+`observed_hours`, `cycles` and `stats` are derived from them. D1 bills by
+rows *scanned*, and the free tier allows 5M/day, so nothing on the request
+path may scan history. Setting `stats.built = 0` makes the next cron rebuild
+the aggregates from scratch (the one O(history) scan).
 
 See `docs/WASH_CONNECT_API.md` (repo root) for upstream quirks; the
 stuck-`in_use` correction and friends live in `src/wash.ts`. The API types
@@ -35,6 +42,7 @@ curl localhost:8787/heatmap
 # Fake usage history, so /heatmap has data before real samples accumulate:
 node scripts/generate-seed.mjs > .wrangler/seed.sql
 npx wrangler d1 execute wash --local --file .wrangler/seed.sql
+curl "localhost:8787/__scheduled?cron=*/10+*+*+*+*"   # rebuilds the aggregates
 
 # Inspect the local database (plain SQLite under .wrangler/state):
 npx wrangler d1 execute wash --local \

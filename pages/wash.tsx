@@ -291,8 +291,9 @@ const Wash = () => {
   }, []);
 
   // Same cadence as the status poll; new data only lands when the worker's
-  // cron samples (every 10 minutes), but the worker's short cache window
-  // makes each poll cheap and surfaces fresh samples within a minute or two.
+  // cron samples (every 10 minutes). Vercel does not cache this rewrite, so
+  // every poll reaches the worker — cheap only because /heatmap is served
+  // from a bounded aggregate table (see workers/wash/src/aggregates.ts).
   useEffect(() => {
     refreshHeatmap();
     const interval = setInterval(refreshHeatmap, REFRESH_INTERVAL_MS);

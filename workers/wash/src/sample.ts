@@ -1,3 +1,4 @@
+import { aggregateWrites, ensureAggregates } from "./aggregates";
 import { DEFAULT_CODE, fetchMachines, resolveLocation } from "./wash";
 
 export interface Env {
@@ -17,6 +18,24 @@ export const samplePoll = async (
   env: Env,
   source: string,
 ): Promise<SampleOutcome> => {
+  const outcome = await poll(env, source);
+  // Fold history into the heatmap aggregates once after deploy, and after a
+  // manual reset (stats.built = 0). Runs after the raw record is written so
+  // a failing rebuild never blocks sampling; it backs off its own retries.
+  try {
+    if (await ensureAggregates(env)) {
+      console.log("aggregates rebuilt");
+    }
+  } catch (err) {
+    console.error(
+      "aggregate rebuild failed:",
+      err instanceof Error ? err.message : String(err),
+    );
+  }
+  return outcome;
+};
+
+const poll = async (env: Env, source: string): Promise<SampleOutcome> => {
   const now = new Date();
   const minIntervalMs = Number(env.MIN_POLL_INTERVAL_SECONDS) * 1_000;
 
@@ -43,7 +62,7 @@ export const samplePoll = async (
     const { machines, rawBody } = await fetchMachines(uln);
     const upstreamMs = Date.now() - startedAt;
 
-    const poll = await env.WASH_DB.prepare(
+    const inserted = await env.WASH_DB.prepare(
       `INSERT INTO polls (polled_at, source, code, ok, upstream_ms, raw_json)
        VALUES (?, ?, ?, 1, ?, ?)`,
     )
@@ -55,29 +74,30 @@ export const samplePoll = async (
         JSON.stringify(rawBody),
       )
       .run();
-    const pollId = poll.meta.last_row_id;
+    const pollId = inserted.meta.last_row_id;
 
-    if (machines.length > 0) {
-      const insert = env.WASH_DB.prepare(
-        `INSERT INTO usage
-           (poll_id, machine_number, type, status, derived_status,
-            start_time, ends_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      );
-      await env.WASH_DB.batch(
-        machines.map(({ machine, raw }) =>
-          insert.bind(
-            pollId,
-            machine.number,
-            machine.type,
-            raw.status ?? "unknown",
-            machine.status,
-            raw.start_time ?? null,
-            machine.endsAt,
-          ),
+    // The usage rows and the heatmap aggregates land in one batch, so the
+    // raw record and the derived tables can't disagree.
+    const insert = env.WASH_DB.prepare(
+      `INSERT INTO usage
+         (poll_id, machine_number, type, status, derived_status,
+          start_time, ends_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    );
+    await env.WASH_DB.batch([
+      ...machines.map(({ machine, raw }) =>
+        insert.bind(
+          pollId,
+          machine.number,
+          machine.type,
+          raw.status ?? "unknown",
+          machine.status,
+          raw.start_time ?? null,
+          machine.endsAt,
         ),
-      );
-    }
+      ),
+      ...(await aggregateWrites(env, now.toISOString(), machines)),
+    ]);
     return { kind: "sampled", pollId, machines: machines.length };
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err);
