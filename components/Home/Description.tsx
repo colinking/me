@@ -21,9 +21,9 @@ export const Description = () => (
       and various platform systems.
     </p>
     <p>
-      Before that, I studied at the <TextLink href="https://umd.edu/">University of Maryland</TextLink>{" "}
-      where I pursued a Master{"'"}s in Computer Science with a focus on
-      distributed systems. I also created the course{" "}
+      Before that, I studied Computer Science at the{" "}
+      <TextLink href="https://umd.edu/">University of Maryland</TextLink>.
+      I also created the course{" "}
       <TextLink href="http://ter.ps/pccS18">
         Practical Cloud Computing with AWS
       </TextLink>{" "}
